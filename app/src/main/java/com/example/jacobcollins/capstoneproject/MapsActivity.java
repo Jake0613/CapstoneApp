@@ -121,7 +121,7 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.current_place_menu, menu);
+//        getMenuInflater().inflate(R.menu.current_place_menu, menu);
         return true;
     }
 
