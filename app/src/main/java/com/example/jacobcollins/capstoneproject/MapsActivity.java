@@ -1,6 +1,7 @@
 package com.example.jacobcollins.capstoneproject;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -9,12 +10,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -66,12 +69,7 @@ public class MapsActivity extends AppCompatActivity
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
 
-    // Used for selecting the current place.
-    private static final int M_MAX_ENTRIES = 5;
-    private String[] mLikelyPlaceNames;
-    private String[] mLikelyPlaceAddresses;
-    private String[] mLikelyPlaceAttributions;
-    private LatLng[] mLikelyPlaceLatLngs;
+    private Toolbar mTopToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +98,9 @@ public class MapsActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+//        mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+//        setSupportActionBar(mTopToolbar);
+
     }
 
     /**
@@ -121,7 +122,8 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.current_place_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -132,10 +134,34 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == R.id.option_get_place) {
-//            showCurrentPlace();
+        if (item.getItemId() == R.id.game_tab) {
+            Toast.makeText(MapsActivity.this, "Game Tab Clicked", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(MapsActivity.this, GameActivity.class));
+        }
+
+        else if (item.getItemId() == R.id.health_insurance_tab) {
+            Toast.makeText(MapsActivity.this, "Health Insurance Tab Clicked", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(MapsActivity.this, HealthInsuranceActivity.class));
+        }
+
+        else if (item.getItemId() == R.id.goals_tab) {
+            Toast.makeText(MapsActivity.this, "Goals Tab Clicked", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(MapsActivity.this, GoalsActivity.class));
+        }
+
+        else if (item.getItemId() == R.id.help_tab) {
+            Toast.makeText(MapsActivity.this, "Help Tab Clicked", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(MapsActivity.this, HelpActivity.class));
+        }
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_favorite) {
+//            Toast.makeText(MapsActivity.this, "Action clicked", Toast.LENGTH_LONG).show();
+//            return true;
 //        }
-        return true;
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
