@@ -135,22 +135,22 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.game_tab) {
-            Toast.makeText(MapsActivity.this, "Game Tab Clicked", Toast.LENGTH_LONG).show();
+            Toast.makeText(MapsActivity.this, "Game Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, GameActivity.class));
         }
 
         else if (item.getItemId() == R.id.health_insurance_tab) {
-            Toast.makeText(MapsActivity.this, "Health Insurance Tab Clicked", Toast.LENGTH_LONG).show();
+            Toast.makeText(MapsActivity.this, "Health Insurance Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, HealthInsuranceActivity.class));
         }
 
         else if (item.getItemId() == R.id.goals_tab) {
-            Toast.makeText(MapsActivity.this, "Goals Tab Clicked", Toast.LENGTH_LONG).show();
+            Toast.makeText(MapsActivity.this, "Goals Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, GoalsActivity.class));
         }
 
         else if (item.getItemId() == R.id.help_tab) {
-            Toast.makeText(MapsActivity.this, "Help Tab Clicked", Toast.LENGTH_LONG).show();
+            Toast.makeText(MapsActivity.this, "Help Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, HelpActivity.class));
         }
 //        int id = item.getItemId();

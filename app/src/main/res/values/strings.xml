@@ -9,4 +9,11 @@
     <string name="title_activity_health_insurance">HealthInsuranceActivity</string>
     <string name="title_activity_goals">GoalsActivity</string>
     <string name="title_activity_help">HelpActivity</string>
+    <string name="help_page_overview">A Help Overview will be completely written on the completion of this app on this page.
+        It will include an overview of what each tab/page does and any other significant info that I deem important for the user to know.</string>
+    <string name="health_insurance_page_overview">The database UI/this page will be completed when I begin working on the database
+        because of as of right now I do not know what kind of data I want the user to enter or if its just going to be a button
+        that the user clicks and it then sends data that the app stores.</string>
+    <string name="game_page_overview">The game UI/this page will be completed when I begin working on it as of right now
+        I am not 100% exactly what the game will look like so right now all it gets is this TextView.</string>
 </resources>
