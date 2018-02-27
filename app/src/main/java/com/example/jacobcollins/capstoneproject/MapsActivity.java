@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +43,7 @@ import com.google.android.gms.tasks.Task;
  * An activity that displays a map showing the place at the device's current location.
  */
 public class MapsActivity extends AppCompatActivity
-        implements OnMapReadyCallback {
+        implements OnMapReadyCallback, OnClickListener {
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap mMap;
@@ -69,7 +71,7 @@ public class MapsActivity extends AppCompatActivity
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
 
-    private Toolbar mTopToolbar;
+    private Button startRunBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +99,9 @@ public class MapsActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        startRunBtn = (Button) findViewById(R.id.startRunBtn) ;
+        startRunBtn.setOnClickListener(this);
 
 //        mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 //        setSupportActionBar(mTopToolbar);
@@ -416,6 +421,22 @@ public class MapsActivity extends AppCompatActivity
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view == startRunBtn)
+        {
+//            if(startRunBtn.getText().toString().trim().contains("Start Run")) Toast.makeText(MapsActivity.this, startRunBtn.getText().toString(), Toast.LENGTH_SHORT).show();
+            if(startRunBtn.getText().toString().trim().contains("Start Run")) {
+                startRunBtn.setText("End Run");
+                Toast.makeText(MapsActivity.this, "Run Started!", Toast.LENGTH_SHORT).show();
+            }
+            else if(startRunBtn.getText().toString().trim().contains("End Run")){
+                startRunBtn.setText("Start Run");
+                Toast.makeText(MapsActivity.this, "Run Ended!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

@@ -1,4 +1,3 @@
-
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,8 +5,18 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.jacobcollins.capstoneproject.MapsActivity"
-/>
+    tools:context="com.example.jacobcollins.capstoneproject.MapsActivity">
+
+    <Button
+        android:id="@+id/startRunBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="center|bottom"
+        android:text="Start Run"
+        android:layout_marginBottom="20dp"/>
+</fragment>
+
+
 
 
 
