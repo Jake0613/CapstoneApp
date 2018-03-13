@@ -1,10 +1,15 @@
 package com.example.jacobcollins.capstoneproject;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +44,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import java.util.ArrayList;
 
 /**
  * An activity that displays a map showing the place at the device's current location.
@@ -73,6 +81,11 @@ public class MapsActivity extends AppCompatActivity
 
     private Button startRunBtn;
 
+    private TextView timerTextView;
+    long startTime = 0;
+
+    ArrayList<Run> listOfRuns = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +115,8 @@ public class MapsActivity extends AppCompatActivity
 
         startRunBtn = (Button) findViewById(R.id.startRunBtn) ;
         startRunBtn.setOnClickListener(this);
+
+        timerTextView = (TextView)findViewById(R.id.timer);
 
 //        mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 //        setSupportActionBar(mTopToolbar);
@@ -424,6 +439,31 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    long timeInMilliseconds = 0L;
+    long timeSwapBuff = 0L;
+    long updatedTime = 0L;
+
+    //runs without a timer by reposting this handler at the end of the runnable
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
+
+            updatedTime = timeSwapBuff + timeInMilliseconds;
+
+            int secs = (int) (updatedTime / 1000);
+            int mins = secs / 60;
+            secs = secs % 60;
+            int milliseconds = (int) (updatedTime % 1000);
+            timerTextView.setText("" + String.format("%02d",mins) + ":"
+                    + String.format("%02d", secs) + ":"
+                    + String.format("%02d", milliseconds));
+            timerHandler.postDelayed(this, 0);
+        }
+    };
+
     @Override
     public void onClick(View view) {
         if(view == startRunBtn)
@@ -432,11 +472,179 @@ public class MapsActivity extends AppCompatActivity
             if(startRunBtn.getText().toString().trim().contains("Start Run")) {
                 startRunBtn.setText("End Run");
                 Toast.makeText(MapsActivity.this, "Run Started!", Toast.LENGTH_SHORT).show();
+                startTime = SystemClock.uptimeMillis();
+                timerHandler.postDelayed(timerRunnable, 0);
+
             }
             else if(startRunBtn.getText().toString().trim().contains("End Run")){
                 startRunBtn.setText("Start Run");
-                Toast.makeText(MapsActivity.this, "Run Ended!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MapsActivity.this, "Run Ended!", Toast.LENGTH_SHORT).show();
+                Toast toast= Toast.makeText(getApplicationContext(),
+                        "You ran: " + timerTextView.getText() + "!", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0 , 0);
+                toast.show();
+                Run temp = new Run();
+                temp.setRunTime(timerTextView);
+                listOfRuns.add(temp);
+                printListOfRuns(); //print statement remove when done ***********************************************************
+                timerHandler.removeCallbacks(timerRunnable);
+                timerTextView.setText("" + String.format("%02d", 00) + ":"
+                        + String.format("%02d", 00) + ":"
+                        + String.format("%02d", 00));
             }
+        }
+    }
+
+    public String printListOfRuns()
+    {
+        for(Run r: listOfRuns)
+        {
+            System.out.println(r.getRunTime() + "\n");
+        }
+
+        return "\n";
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        timerHandler.removeCallbacks(timerRunnable);
+        saveData();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        loadData(this);
+    }
+
+    public boolean saveData()
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor mEdit1 = sp.edit();
+
+        //Put the array size in for so when you retrieve the data you know how long the data is
+        mEdit1.putInt("ArraySize", listOfRuns.size());
+
+        for(int i=0;i<listOfRuns.size();i++)
+        {
+            mEdit1.remove("Run" + i);
+            mEdit1.putString("Run" + i, listOfRuns.get(i).getRunTime());
+        }
+
+        return mEdit1.commit();
+    }
+
+    public void loadData(Context mContext)
+    {
+        SharedPreferences mSharedPreference1 =   PreferenceManager.getDefaultSharedPreferences(mContext);
+        listOfRuns.clear();
+        int size = mSharedPreference1.getInt("ArraySize", 0);
+
+        for(int i=0;i<size;i++)
+        {
+            String tempStr = mSharedPreference1.getString("Run" + i, null);
+            Run temp = new Run();
+            temp.setRunTime(tempStr);
+            listOfRuns.add(temp);
+        }
+    }
+
+    public boolean eraseData()
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor mEdit1 = sp.edit();
+
+        //Put the array size in for so when you retrieve the data you know how long the data is
+        mEdit1.putInt("ArraySize", 0);
+
+        for(int i=0;i<listOfRuns.size();i++)
+        {
+            mEdit1.remove("Run" + i);
+        }
+
+        return mEdit1.commit();
+    }
+
+    public class Run
+    {
+        int minutes;
+        int seconds;
+        int milliseconds;
+
+        public Run()
+        {
+            minutes = 0;
+            seconds = 0;
+            milliseconds = 0;
+        }
+
+        void setRunTime(TextView view)
+        {
+            String temp = view.getText().toString();
+            String valueStr = "";
+            boolean onMinutes = true;
+            boolean onSeconds = false;
+            for(int i=0;i<temp.length();i++)
+            {
+                if(temp.charAt(i) == ':')
+                {
+                    if(onMinutes)
+                    {
+                        minutes = Integer.parseInt(valueStr);
+                        onMinutes = false;
+                        onSeconds = true;
+                        valueStr = "";
+                    }
+
+                    else if(onSeconds)
+                    {
+                        seconds = Integer.parseInt(valueStr);
+                        valueStr = temp.substring(i+1,i+3);
+                        milliseconds = Integer.parseInt(valueStr);
+                    }
+                }
+                else
+                    valueStr += temp.charAt(i);
+            }
+        }
+
+        void setRunTime(String str)
+        {
+            String temp = str;
+            String valueStr = "";
+            boolean onMinutes = true;
+            boolean onSeconds = false;
+            for(int i=0;i<temp.length();i++)
+            {
+                if(temp.charAt(i) == ':')
+                {
+                    if(onMinutes)
+                    {
+                        minutes = Integer.parseInt(valueStr);
+                        onMinutes = false;
+                        onSeconds = true;
+                        valueStr = "";
+                    }
+
+                    else if(onSeconds)
+                    {
+                        seconds = Integer.parseInt(valueStr);
+                        valueStr = temp.substring(i+1,i+3);
+                        milliseconds = Integer.parseInt(valueStr);
+                    }
+                }
+                else
+                    valueStr += temp.charAt(i);
+            }
+        }
+
+        String getRunTime()
+        {
+            return "" + String.format("%02d",minutes) + ":"
+                    + String.format("%02d", seconds) + ":"
+                    + String.format("%02d", milliseconds);
         }
     }
 }

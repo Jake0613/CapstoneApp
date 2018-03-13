@@ -35,7 +35,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,7 +46,8 @@
         <activity
             android:name=".GameActivity"
             android:label="Game"
-            android:parentActivityName=".MapsActivity">
+            android:parentActivityName=".MapsActivity"
+            android:screenOrientation="portrait">
 
             <!-- android:theme="@style/AppTheme.NoActionBar" -->
             <meta-data
@@ -55,7 +57,8 @@
         <activity
             android:name=".HealthInsuranceActivity"
             android:label="Health Insurance"
-            android:parentActivityName=".MapsActivity">
+            android:parentActivityName=".MapsActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsActivity" />
@@ -63,7 +66,8 @@
         <activity
             android:name=".GoalsActivity"
             android:label="Goals"
-            android:parentActivityName=".MapsActivity">
+            android:parentActivityName=".MapsActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsActivity" />
@@ -71,7 +75,8 @@
         <activity
             android:name=".HelpActivity"
             android:label="Help"
-            android:parentActivityName=".MapsActivity">
+            android:parentActivityName=".MapsActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsActivity" />
