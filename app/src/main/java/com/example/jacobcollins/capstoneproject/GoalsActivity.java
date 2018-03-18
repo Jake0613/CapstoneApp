@@ -1,26 +1,12 @@
 package com.example.jacobcollins.capstoneproject;
 
-import android.app.Activity;
-import android.app.ListActivity;
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.database.Cursor;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.Layout;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.SimpleCursorAdapter;
-import android.widget.GridLayout.LayoutParams;
 import android.widget.Toast;
 
 public class GoalsActivity extends AppCompatActivity implements OnClickListener {
@@ -28,6 +14,10 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
     private Button btnGoal1;
     private Button btnGoal2;
     private Button btnGoal3;
+
+    boolean isFragmentDisplayedGoal1 = false;
+    boolean isFragmentDisplayedGoal2 = false;
+    boolean isFragmentDisplayedGoal3 = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,27 +32,97 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
 
         btnGoal3 = (Button) findViewById(R.id.btnGoal3) ;
         btnGoal3.setOnClickListener(this);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-        // Create a progress bar to display while the list loads
-//        ProgressBar progressBar = new ProgressBar(this);
-//        progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-//                LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-//        progressBar.setIndeterminate(true);
-//        getListView().setEmptyView(progressBar);
-//
-//        // Must add the progress bar to the root of the layout
-//        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-//        root.addView(progressBar);
+    }
+
+    public void displayFragment(String typeOfFragment)
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager
+                .beginTransaction();
+        if(typeOfFragment.equals("goal1"))
+        {
+            Goal1Fragment fragment = Goal1Fragment.newInstance();
+            fragmentTransaction.add(R.id.fragment_container,
+            fragment).addToBackStack(null).commit();
+            // Update the Button text.
+            //btnGoal1.setText(R.string.close);
+            // Set boolean flag to indicate fragment is open.
+            isFragmentDisplayedGoal1 = true;
+        }
+
+        else if(typeOfFragment.equals("goal2"))
+        {
+            Goal2Fragment fragment = Goal2Fragment.newInstance();
+            fragmentTransaction.add(R.id.fragment_container,
+                    fragment).addToBackStack(null).commit();
+            // Update the Button text.
+            //btnGoal1.setText(R.string.close);
+            // Set boolean flag to indicate fragment is open.
+            isFragmentDisplayedGoal2 = true;
+        }
+
+        else if(typeOfFragment.equals("goal3"))
+        {
+            Goal3Fragment fragment = Goal3Fragment.newInstance();
+            fragmentTransaction.add(R.id.fragment_container,
+                    fragment).addToBackStack(null).commit();
+            // Update the Button text.
+            //btnGoal1.setText(R.string.close);
+            // Set boolean flag to indicate fragment is open.
+            isFragmentDisplayedGoal3 = true;
+        }
+    }
+
+    public void closeFragment(String typeOfFragment)
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if(typeOfFragment.equals("goal1"))
+        {
+            Goal1Fragment fragment = (Goal1Fragment) fragmentManager
+                    .findFragmentById(R.id.fragment_container);
+            if (fragment != null) {
+                // Create and commit the transaction to remove the fragment.
+                FragmentTransaction fragmentTransaction =
+                        fragmentManager.beginTransaction();
+                fragmentTransaction.remove(fragment).commit();
+            }
+            // Update the Button text.
+            //mButton.setText(R.string.open);
+            // Set boolean flag to indicate fragment is closed.
+            isFragmentDisplayedGoal1 = false;
+        }
+
+        else if(typeOfFragment.equals("goal2"))
+        {
+            Goal2Fragment fragment = (Goal2Fragment) fragmentManager
+                    .findFragmentById(R.id.fragment_container);
+            if (fragment != null) {
+                // Create and commit the transaction to remove the fragment.
+                FragmentTransaction fragmentTransaction =
+                        fragmentManager.beginTransaction();
+                fragmentTransaction.remove(fragment).commit();
+            }
+            // Update the Button text.
+            //mButton.setText(R.string.open);
+            // Set boolean flag to indicate fragment is closed.
+            isFragmentDisplayedGoal2 = false;
+        }
+
+        else if(typeOfFragment.equals("goal3"))
+        {
+            Goal3Fragment fragment = (Goal3Fragment) fragmentManager
+                    .findFragmentById(R.id.fragment_container);
+            if (fragment != null) {
+                // Create and commit the transaction to remove the fragment.
+                FragmentTransaction fragmentTransaction =
+                        fragmentManager.beginTransaction();
+                fragmentTransaction.remove(fragment).commit();
+            }
+            // Update the Button text.
+            //mButton.setText(R.string.open);
+            // Set boolean flag to indicate fragment is closed.
+            isFragmentDisplayedGoal3 = false;
+        }
     }
 
     @Override
@@ -70,16 +130,40 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         if(view == btnGoal1)
         {
             Toast.makeText(GoalsActivity.this, "Button 1 Clicked", Toast.LENGTH_SHORT).show();
+            if (!isFragmentDisplayedGoal1 && !isFragmentDisplayedGoal2 && !isFragmentDisplayedGoal3)
+            {
+                displayFragment("goal1");
+            } else
+            {
+                if(isFragmentDisplayedGoal2){ closeFragment("goal2"); displayFragment("goal1"); }
+                else if(isFragmentDisplayedGoal3){ closeFragment("goal3"); displayFragment("goal1"); }
+            }
         }
 
         else if(view == btnGoal2)
         {
             Toast.makeText(GoalsActivity.this, "Button 2 Clicked", Toast.LENGTH_SHORT).show();
+            if (!isFragmentDisplayedGoal1 && !isFragmentDisplayedGoal2 && !isFragmentDisplayedGoal3)
+            {
+                displayFragment("goal2");
+            } else
+            {
+                if(isFragmentDisplayedGoal1){ closeFragment("goal1"); displayFragment("goal2"); }
+                else if(isFragmentDisplayedGoal3){ closeFragment("goal3"); displayFragment("goal2"); }
+            }
         }
 
         else if(view == btnGoal3)
         {
             Toast.makeText(GoalsActivity.this, "Button 3 Clicked", Toast.LENGTH_SHORT).show();
+            if (!isFragmentDisplayedGoal1 && !isFragmentDisplayedGoal2 && !isFragmentDisplayedGoal3)
+            {
+                displayFragment("goal3");
+            } else
+            {
+                if(isFragmentDisplayedGoal1){ closeFragment("goal1"); displayFragment("goal3"); }
+                else if(isFragmentDisplayedGoal2){ closeFragment("goal2"); displayFragment("goal3"); }
+            }
         }
     }
 }

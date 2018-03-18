@@ -16,4 +16,13 @@
         that the user clicks and it then sends data that the app stores.</string>
     <string name="game_page_overview">The game UI/this page will be completed when I begin working on it as of right now
         I am not 100% exactly what the game will look like so right now all it gets is this TextView.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="goal1_fragment_text">Set your first goal!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="goal2_fragment_text">Set your second goal!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="goal3_fragment_text">Set your third goal!</string>
 </resources>
