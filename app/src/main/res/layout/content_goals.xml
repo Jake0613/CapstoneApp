@@ -1,35 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:id="@+id/GoalsFragmentManager"
 android:layout_width="fill_parent"
 android:layout_height="fill_parent" >
+    <TextView
+        android:id="@+id/GoalText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textSize="20dp"
+        android:text="@string/goal1_fragment_text" />
 
-<Button
-    android:id="@+id/btnGoal1"
-    android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:layout_centerInParent="true"
-    android:layout_alignParentTop="true"
-    android:text="Goal 1"/>
+    <CheckBox
+        android:id="@+id/OneMileCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/GoalText"
+        android:text="@string/OneMileText"
+        android:onClick="distanceCheckboxClicked"/>
 
-<Button
-    android:id="@+id/btnGoal2"
-    android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:layout_centerInParent="true"
-    android:text="Goal 2"
-    android:layout_below="@+id/btnGoal1"/>
+    <CheckBox
+        android:id="@+id/FiveMilesCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/OneMileCheckBox"
+        android:text="@string/FiveMilesText"
+        android:onClick="distanceCheckboxClicked"/>
 
-<Button
-    android:id="@+id/btnGoal3"
-    android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:layout_centerInParent="true"
-    android:text="Goal 3"
-    android:layout_below="@+id/btnGoal2"/>
-<FrameLayout
-    android:id="@+id/fragment_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_below="@id/btnGoal3"/>
+    <CheckBox
+        android:id="@+id/TenMilesCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/FiveMilesCheckBox"
+        android:text="@string/TenMilesText"
+        android:onClick="distanceCheckboxClicked"/>
+
+    <CheckBox
+        android:id="@+id/TwentyMilesCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TenMilesCheckBox"
+        android:text="@string/TwentyMilesText"
+        android:onClick="distanceCheckboxClicked"/>
+
+    <CheckBox
+        android:id="@+id/FiftyMilesCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TwentyMilesCheckBox"
+        android:text="@string/FiftyMilesText"
+        android:onClick="distanceCheckboxClicked"/>
+
+    <CheckBox
+        android:id="@+id/OneHundredMilesCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/FiftyMilesCheckBox"
+        android:text="@string/OneHundredMilesText"
+        android:onClick="distanceCheckboxClicked"/>
+
+    <ProgressBar
+        android:id="@+id/distanceProgressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/OneHundredMilesCheckBox" />
+    <TextView
+        android:id="@+id/mileTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/distanceProgressBar"
+        android:textSize="20dp"
+        android:text="@string/mileTimeText"/>
+    <CheckBox
+        android:id="@+id/checkBox9MinuteMileTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mileTimeText"
+        android:text="@string/NineMinuteMile"
+        android:onClick="mileTimeCheckboxClicked"/>
+    <CheckBox
+        android:id="@+id/checkBox8MinuteMileTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBox9MinuteMileTime"
+        android:text="@string/EightMinuteMile"
+        android:onClick="mileTimeCheckboxClicked"/>
+    <CheckBox
+        android:id="@+id/checkBox7MinuteMileTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBox8MinuteMileTime"
+        android:text="@string/SevenMinuteMile"
+        android:onClick="mileTimeCheckboxClicked"/>
+    <CheckBox
+        android:id="@+id/checkBox6MinuteMileTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBox7MinuteMileTime"
+        android:text="@string/SixMinuteMile"
+        android:onClick="mileTimeCheckboxClicked"/>
+    <CheckBox
+        android:id="@+id/checkBox5MinuteMileTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBox6MinuteMileTime"
+        android:text="@string/FiveMinuteMile"
+        android:onClick="mileTimeCheckboxClicked"/>
+    <ProgressBar
+        android:id="@+id/mileTimeProgressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/checkBox5MinuteMileTime" />
 </RelativeLayout>

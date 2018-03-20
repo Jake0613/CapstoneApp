@@ -1,5 +1,8 @@
 package com.example.jacobcollins.capstoneproject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
@@ -7,163 +10,237 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class GoalsActivity extends AppCompatActivity implements OnClickListener {
 
-    private Button btnGoal1;
-    private Button btnGoal2;
-    private Button btnGoal3;
+    private CheckBox checkBoxOneMile;
+    private CheckBox checkBoxFiveMiles;
+    private CheckBox checkBoxTenMiles;
+    private CheckBox checkBoxTwentyMiles;
+    private CheckBox checkBoxFiftyMiles;
+    private CheckBox checkBoxOneHundredMiles;
 
-    boolean isFragmentDisplayedGoal1 = false;
-    boolean isFragmentDisplayedGoal2 = false;
-    boolean isFragmentDisplayedGoal3 = false;
+    private ProgressBar distanceProgressBar;
+
+    private CheckBox checkBoxNineMinuteMile;
+    private CheckBox checkBoxEightMinuteMile;
+    private CheckBox checkBoxSevenMinuteMile;
+    private CheckBox checkBoxSixMinuteMile;
+    private CheckBox checkBoxFiveMinuteMile;
+
+    private ProgressBar mileTimeProgressBar;
+
+    private boolean OneMileDistanceGoal = false;
+    private boolean FiveMilesDistanceGoal = false;
+    private boolean TenMilesDistanceGoal = false;
+    private boolean TwentyMilesDistanceGoal = false;
+    private boolean FiftyMilesDistanceGoal = false;
+    private boolean OneHundredMilesDistanceGoal = false;
+
+    private boolean NineMinuteTimeGoal = false;
+    private boolean EightMinuteTimeGoal = false;
+    private boolean SevenMinuteTimeGoal = false;
+    private boolean SixMinuteTimeGoal = false;
+    private boolean FiveMinuteTimeGoal = false;
+
+    private int progressDistanceAmount = 0;
+    private int progressMileTimeAmount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goals);
 
-        btnGoal1 = (Button) findViewById(R.id.btnGoal1) ;
-        btnGoal1.setOnClickListener(this);
+        checkBoxOneMile = findViewById(R.id.OneMileCheckBox);
+        checkBoxFiveMiles = findViewById(R.id.FiveMilesCheckBox);
+        checkBoxTenMiles = findViewById(R.id.TenMilesCheckBox);
+        checkBoxTwentyMiles = findViewById(R.id.TwentyMilesCheckBox);
+        checkBoxFiftyMiles = findViewById(R.id.FiftyMilesCheckBox);
+        checkBoxOneHundredMiles = findViewById(R.id.OneHundredMilesCheckBox);
 
-        btnGoal2 = (Button) findViewById(R.id.btnGoal2) ;
-        btnGoal2.setOnClickListener(this);
+        distanceProgressBar = findViewById(R.id.distanceProgressBar);
 
-        btnGoal3 = (Button) findViewById(R.id.btnGoal3) ;
-        btnGoal3.setOnClickListener(this);
+        checkBoxNineMinuteMile = findViewById(R.id.checkBox9MinuteMileTime);
+        checkBoxEightMinuteMile = findViewById(R.id.checkBox8MinuteMileTime);
+        checkBoxSevenMinuteMile = findViewById(R.id.checkBox7MinuteMileTime);
+        checkBoxSixMinuteMile = findViewById(R.id.checkBox6MinuteMileTime);
+        checkBoxFiveMinuteMile = findViewById(R.id.checkBox5MinuteMileTime);
+
+        mileTimeProgressBar = findViewById(R.id.mileTimeProgressBar);
     }
 
-    public void displayFragment(String typeOfFragment)
+    public void distanceCheckboxClicked(View view)
     {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager
-                .beginTransaction();
-        if(typeOfFragment.equals("goal1"))
-        {
-            Goal1Fragment fragment = Goal1Fragment.newInstance();
-            fragmentTransaction.add(R.id.fragment_container,
-            fragment).addToBackStack(null).commit();
-            // Update the Button text.
-            //btnGoal1.setText(R.string.close);
-            // Set boolean flag to indicate fragment is open.
-            isFragmentDisplayedGoal1 = true;
-        }
+        unCheckOtherDistanceBoxesOtherThan(view);
+    }
 
-        else if(typeOfFragment.equals("goal2"))
-        {
-            Goal2Fragment fragment = Goal2Fragment.newInstance();
-            fragmentTransaction.add(R.id.fragment_container,
-                    fragment).addToBackStack(null).commit();
-            // Update the Button text.
-            //btnGoal1.setText(R.string.close);
-            // Set boolean flag to indicate fragment is open.
-            isFragmentDisplayedGoal2 = true;
-        }
+    public void mileTimeCheckboxClicked(View view)
+    {
+        unCheckOtherMileTimeBoxesOtherThan(view);
+    }
 
-        else if(typeOfFragment.equals("goal3"))
-        {
-            Goal3Fragment fragment = Goal3Fragment.newInstance();
-            fragmentTransaction.add(R.id.fragment_container,
-                    fragment).addToBackStack(null).commit();
-            // Update the Button text.
-            //btnGoal1.setText(R.string.close);
-            // Set boolean flag to indicate fragment is open.
-            isFragmentDisplayedGoal3 = true;
+    public void unCheckOtherDistanceBoxesOtherThan(View view)
+    {
+        switch (view.getId()) {
+            case R.id.OneMileCheckBox:
+                if (checkBoxFiveMiles.isChecked()) checkBoxFiveMiles.toggle();
+                else if (checkBoxTenMiles.isChecked()) checkBoxTenMiles.toggle();
+                else if (checkBoxTwentyMiles.isChecked()) checkBoxTwentyMiles.toggle();
+                else if (checkBoxFiftyMiles.isChecked()) checkBoxFiftyMiles.toggle();
+                else if (checkBoxOneHundredMiles.isChecked()) checkBoxOneHundredMiles.toggle();
+                break;
+            case R.id.FiveMilesCheckBox:
+                if (checkBoxOneMile.isChecked()) checkBoxOneMile.toggle();
+                else if (checkBoxTenMiles.isChecked()) checkBoxTenMiles.toggle();
+                else if (checkBoxTwentyMiles.isChecked()) checkBoxTwentyMiles.toggle();
+                else if (checkBoxFiftyMiles.isChecked()) checkBoxFiftyMiles.toggle();
+                else if (checkBoxOneHundredMiles.isChecked()) checkBoxOneHundredMiles.toggle();
+                break;
+            case R.id.TenMilesCheckBox:
+                if (checkBoxOneMile.isChecked()) checkBoxOneMile.toggle();
+                else if (checkBoxFiveMiles.isChecked()) checkBoxFiveMiles.toggle();
+                else if (checkBoxTwentyMiles.isChecked()) checkBoxTwentyMiles.toggle();
+                else if (checkBoxFiftyMiles.isChecked()) checkBoxFiftyMiles.toggle();
+                else if (checkBoxOneHundredMiles.isChecked()) checkBoxOneHundredMiles.toggle();
+                break;
+            case R.id.TwentyMilesCheckBox:
+                if (checkBoxOneMile.isChecked()) checkBoxOneMile.toggle();
+                else if (checkBoxFiveMiles.isChecked()) checkBoxFiveMiles.toggle();
+                else if (checkBoxTenMiles.isChecked()) checkBoxTenMiles.toggle();
+                else if (checkBoxFiftyMiles.isChecked()) checkBoxFiftyMiles.toggle();
+                else if (checkBoxOneHundredMiles.isChecked()) checkBoxOneHundredMiles.toggle();
+                break;
+            case R.id.FiftyMilesCheckBox:
+                if (checkBoxOneMile.isChecked()) checkBoxOneMile.toggle();
+                else if (checkBoxFiveMiles.isChecked()) checkBoxFiveMiles.toggle();
+                else if (checkBoxTenMiles.isChecked()) checkBoxTenMiles.toggle();
+                else if (checkBoxTwentyMiles.isChecked()) checkBoxTwentyMiles.toggle();
+                else if (checkBoxOneHundredMiles.isChecked()) checkBoxOneHundredMiles.toggle();
+                break;
+            case R.id.OneHundredMilesCheckBox:
+                if (checkBoxOneMile.isChecked()) checkBoxOneMile.toggle();
+                else if (checkBoxFiveMiles.isChecked()) checkBoxFiveMiles.toggle();
+                else if (checkBoxTenMiles.isChecked()) checkBoxTenMiles.toggle();
+                else if (checkBoxTwentyMiles.isChecked()) checkBoxTwentyMiles.toggle();
+                else if (checkBoxFiftyMiles.isChecked()) checkBoxFiftyMiles.toggle();
+                break;
         }
     }
 
-    public void closeFragment(String typeOfFragment)
+    public void unCheckOtherMileTimeBoxesOtherThan(View view)
     {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if(typeOfFragment.equals("goal1"))
-        {
-            Goal1Fragment fragment = (Goal1Fragment) fragmentManager
-                    .findFragmentById(R.id.fragment_container);
-            if (fragment != null) {
-                // Create and commit the transaction to remove the fragment.
-                FragmentTransaction fragmentTransaction =
-                        fragmentManager.beginTransaction();
-                fragmentTransaction.remove(fragment).commit();
-            }
-            // Update the Button text.
-            //mButton.setText(R.string.open);
-            // Set boolean flag to indicate fragment is closed.
-            isFragmentDisplayedGoal1 = false;
-        }
-
-        else if(typeOfFragment.equals("goal2"))
-        {
-            Goal2Fragment fragment = (Goal2Fragment) fragmentManager
-                    .findFragmentById(R.id.fragment_container);
-            if (fragment != null) {
-                // Create and commit the transaction to remove the fragment.
-                FragmentTransaction fragmentTransaction =
-                        fragmentManager.beginTransaction();
-                fragmentTransaction.remove(fragment).commit();
-            }
-            // Update the Button text.
-            //mButton.setText(R.string.open);
-            // Set boolean flag to indicate fragment is closed.
-            isFragmentDisplayedGoal2 = false;
-        }
-
-        else if(typeOfFragment.equals("goal3"))
-        {
-            Goal3Fragment fragment = (Goal3Fragment) fragmentManager
-                    .findFragmentById(R.id.fragment_container);
-            if (fragment != null) {
-                // Create and commit the transaction to remove the fragment.
-                FragmentTransaction fragmentTransaction =
-                        fragmentManager.beginTransaction();
-                fragmentTransaction.remove(fragment).commit();
-            }
-            // Update the Button text.
-            //mButton.setText(R.string.open);
-            // Set boolean flag to indicate fragment is closed.
-            isFragmentDisplayedGoal3 = false;
+        switch (view.getId()) {
+            case R.id.checkBox9MinuteMileTime:
+                if (checkBoxEightMinuteMile.isChecked()) checkBoxEightMinuteMile.toggle();
+                else if (checkBoxSevenMinuteMile.isChecked()) checkBoxSevenMinuteMile.toggle();
+                else if (checkBoxSixMinuteMile.isChecked()) checkBoxSixMinuteMile.toggle();
+                else if (checkBoxFiveMinuteMile.isChecked()) checkBoxFiveMinuteMile.toggle();
+                break;
+            case R.id.checkBox8MinuteMileTime:
+                if (checkBoxNineMinuteMile.isChecked()) checkBoxNineMinuteMile.toggle();
+                else if (checkBoxSevenMinuteMile.isChecked()) checkBoxSevenMinuteMile.toggle();
+                else if (checkBoxSixMinuteMile.isChecked()) checkBoxSixMinuteMile.toggle();
+                else if (checkBoxFiveMinuteMile.isChecked()) checkBoxFiveMinuteMile.toggle();
+                break;
+            case R.id.checkBox7MinuteMileTime:
+                if (checkBoxNineMinuteMile.isChecked()) checkBoxNineMinuteMile.toggle();
+                else if (checkBoxEightMinuteMile.isChecked()) checkBoxEightMinuteMile.toggle();
+                else if (checkBoxSixMinuteMile.isChecked()) checkBoxSixMinuteMile.toggle();
+                else if (checkBoxFiveMinuteMile.isChecked()) checkBoxFiveMinuteMile.toggle();
+                break;
+            case R.id.checkBox6MinuteMileTime:
+                if (checkBoxNineMinuteMile.isChecked()) checkBoxNineMinuteMile.toggle();
+                else if (checkBoxEightMinuteMile.isChecked()) checkBoxEightMinuteMile.toggle();
+                else if (checkBoxSevenMinuteMile.isChecked()) checkBoxSevenMinuteMile.toggle();
+                else if (checkBoxFiveMinuteMile.isChecked()) checkBoxFiveMinuteMile.toggle();
+                break;
+            case R.id.checkBox5MinuteMileTime:
+                if (checkBoxNineMinuteMile.isChecked()) checkBoxNineMinuteMile.toggle();
+                else if (checkBoxEightMinuteMile.isChecked()) checkBoxEightMinuteMile.toggle();
+                else if (checkBoxSevenMinuteMile.isChecked()) checkBoxSevenMinuteMile.toggle();
+                else if (checkBoxSixMinuteMile.isChecked()) checkBoxSixMinuteMile.toggle();
+                break;
         }
     }
 
     @Override
-    public void onClick(View view) {
-        if(view == btnGoal1)
+    public void onPause() {
+        super.onPause();
+        saveData();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        loadData(this);
+    }
+
+    public boolean saveData()
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor mEdit1 = sp.edit();
+
+        mEdit1.clear();
+
+        if(checkBoxOneMile.isChecked()) mEdit1.putString("distanceCheckBox", "1");
+        else if(checkBoxFiveMiles.isChecked()) mEdit1.putString("distanceCheckBox", "5");
+        else if(checkBoxTenMiles.isChecked()) mEdit1.putString("distanceCheckBox", "10");
+        else if(checkBoxTwentyMiles.isChecked()) mEdit1.putString("distanceCheckBox", "20");
+        else if(checkBoxFiftyMiles.isChecked()) mEdit1.putString("distanceCheckBox", "50");
+        else if(checkBoxOneHundredMiles.isChecked()) mEdit1.putString("distanceCheckBox", "100");
+
+        mEdit1.putInt("distanceProgressBar Amount", distanceProgressBar.getProgress());
+
+        if(checkBoxNineMinuteMile.isChecked()) mEdit1.putString("mileTimeCheckBox", "9");
+        else if(checkBoxEightMinuteMile.isChecked()) mEdit1.putString("mileTimeCheckBox", "8");
+        else if(checkBoxSevenMinuteMile.isChecked()) mEdit1.putString("mileTimeCheckBox", "7");
+        else if(checkBoxSixMinuteMile.isChecked()) mEdit1.putString("mileTimeCheckBox", "6");
+        else if(checkBoxFiveMinuteMile.isChecked()) mEdit1.putString("mileTimeCheckBox", "5");
+
+        mEdit1.putInt("mileTimeProgressBar Amount", mileTimeProgressBar.getProgress());
+
+        return mEdit1.commit();
+    }
+
+    public void loadData(Context mContext)
+    {
+        SharedPreferences mSharedPreference1 =   PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        if(mSharedPreference1.contains("distanceProgressBar Amount")) distanceProgressBar.setProgress(mSharedPreference1.getInt("distanceProgressBar Amount", 0));
+
+        if(mSharedPreference1.contains("distanceCheckBox"))
         {
-            Toast.makeText(GoalsActivity.this, "Button 1 Clicked", Toast.LENGTH_SHORT).show();
-            if (!isFragmentDisplayedGoal1 && !isFragmentDisplayedGoal2 && !isFragmentDisplayedGoal3)
-            {
-                displayFragment("goal1");
-            } else
-            {
-                if(isFragmentDisplayedGoal2){ closeFragment("goal2"); displayFragment("goal1"); }
-                else if(isFragmentDisplayedGoal3){ closeFragment("goal3"); displayFragment("goal1"); }
-            }
+            String temp = mSharedPreference1.getString("distanceCheckBox", null);
+
+            if (temp.equals("1")) checkBoxOneMile.setChecked(true);
+            else if (temp.equals("5")) checkBoxFiveMiles.setChecked(true);
+            else if (temp.equals("10")) checkBoxTenMiles.setChecked(true);
+            else if (temp.equals("20")) checkBoxTwentyMiles.setChecked(true);
+            else if (temp.equals("50")) checkBoxFiftyMiles.setChecked(true);
+            else if (temp.equals("100")) checkBoxOneHundredMiles.setChecked(true);
         }
 
-        else if(view == btnGoal2)
-        {
-            Toast.makeText(GoalsActivity.this, "Button 2 Clicked", Toast.LENGTH_SHORT).show();
-            if (!isFragmentDisplayedGoal1 && !isFragmentDisplayedGoal2 && !isFragmentDisplayedGoal3)
-            {
-                displayFragment("goal2");
-            } else
-            {
-                if(isFragmentDisplayedGoal1){ closeFragment("goal1"); displayFragment("goal2"); }
-                else if(isFragmentDisplayedGoal3){ closeFragment("goal3"); displayFragment("goal2"); }
-            }
-        }
+        if(mSharedPreference1.contains("mileTimeProgressBar Amount")) mileTimeProgressBar.setProgress((mSharedPreference1.getInt("mileTimeProgressBar Amount", 0)));
 
-        else if(view == btnGoal3)
+        if(mSharedPreference1.contains("mileTimeCheckBox"))
         {
-            Toast.makeText(GoalsActivity.this, "Button 3 Clicked", Toast.LENGTH_SHORT).show();
-            if (!isFragmentDisplayedGoal1 && !isFragmentDisplayedGoal2 && !isFragmentDisplayedGoal3)
-            {
-                displayFragment("goal3");
-            } else
-            {
-                if(isFragmentDisplayedGoal1){ closeFragment("goal1"); displayFragment("goal3"); }
-                else if(isFragmentDisplayedGoal2){ closeFragment("goal2"); displayFragment("goal3"); }
-            }
+            String temp = mSharedPreference1.getString("mileTimeCheckBox", null);
+
+            if (temp.equals("9")) checkBoxNineMinuteMile.setChecked(true);
+            else if (temp.equals("8")) checkBoxEightMinuteMile.setChecked(true);
+            else if (temp.equals("7")) checkBoxSevenMinuteMile.setChecked(true);
+            else if (temp.equals("6")) checkBoxSixMinuteMile.setChecked(true);
+            else if (temp.equals("5")) checkBoxFiveMinuteMile.setChecked(true);
         }
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+
     }
 }

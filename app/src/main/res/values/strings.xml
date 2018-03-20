@@ -16,13 +16,17 @@
         that the user clicks and it then sends data that the app stores.</string>
     <string name="game_page_overview">The game UI/this page will be completed when I begin working on it as of right now
         I am not 100% exactly what the game will look like so right now all it gets is this TextView.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="goal1_fragment_text">Set your first goal!</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="goal2_fragment_text">Set your second goal!</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="goal3_fragment_text">Set your third goal!</string>
+    <string name="OneMileText">1 Mile</string>
+    <string name="FiveMilesText">5 Miles</string>
+    <string name="TenMilesText">10 Miles</string>
+    <string name="TwentyMilesText">20 Miles</string>
+    <string name="FiftyMilesText">50 Miles</string>
+    <string name="OneHundredMilesText">100 Miles</string>
+    <string name="mileTimeText">Pick Your Mile Time Goal</string>
+    <string name="NineMinuteMile">9 Minutes or More Mile</string>
+    <string name="EightMinuteMile">8 Minutes or More Mile </string>
+    <string name="SevenMinuteMile">7 Minutes or More Mile</string>
+    <string name="SixMinuteMile">6 Minutes or More Mile</string>
+    <string name="FiveMinuteMile">5 Minutes or More Mile</string>
+    <string name="goal1_fragment_text">Set Your Distance Goal</string>
 </resources>
