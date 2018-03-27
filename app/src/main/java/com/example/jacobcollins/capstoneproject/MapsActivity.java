@@ -1,11 +1,16 @@
 package com.example.jacobcollins.capstoneproject;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -13,9 +18,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -31,8 +34,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.PlaceDetectionClient;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,7 +46,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * An activity that displays a map showing the place at the device's current location.
@@ -84,7 +89,45 @@ public class MapsActivity extends AppCompatActivity
     private TextView timerTextView;
     long startTime = 0;
 
+    private SensorManager mSensorManager;
+    private Sensor stepSensor;
+
+    private LocationManager locationManager;
+    private Criteria criteria;
+    private String bestProvider;
+
+    double distanceRanInMiles;
+
+//    private Chronometer timer;
+
+    //private LatLng startOfRunCoords = new LatLng();
+
     ArrayList<Run> listOfRuns = new ArrayList<>();
+
+    private double steps = 0;
+
+    private SensorEventListener mLightSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            Sensor sensor = event.sensor;
+            float[] values = event.values;
+            int value = -1;
+
+            if (values.length > 0)
+            {
+                value = (int) values[0];
+            }
+
+            if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+                steps++;
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            //Log.d("MY_APP", sensor.toString() + " - " + accuracy);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,14 +156,20 @@ public class MapsActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        startRunBtn = (Button) findViewById(R.id.startRunBtn) ;
+        startRunBtn = findViewById(R.id.startRunBtn);
         startRunBtn.setOnClickListener(this);
 
-        timerTextView = (TextView)findViewById(R.id.timer);
+        timerTextView = findViewById(R.id.timer);
+        timerTextView.setText("00:00:00");
 
-//        mTopToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-//        setSupportActionBar(mTopToolbar);
+        mLocationPermissionGranted = false;
 
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        if (mSensorManager != null) {
+            stepSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        }
+
+//        timer = (Chronometer) findViewById(R.id.timer);
     }
 
     /**
@@ -157,19 +206,13 @@ public class MapsActivity extends AppCompatActivity
         if (item.getItemId() == R.id.game_tab) {
             Toast.makeText(MapsActivity.this, "Game Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, GameActivity.class));
-        }
-
-        else if (item.getItemId() == R.id.health_insurance_tab) {
+        } else if (item.getItemId() == R.id.health_insurance_tab) {
             Toast.makeText(MapsActivity.this, "Health Insurance Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, HealthInsuranceActivity.class));
-        }
-
-        else if (item.getItemId() == R.id.goals_tab) {
+        } else if (item.getItemId() == R.id.goals_tab) {
             Toast.makeText(MapsActivity.this, "Goals Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, GoalsActivity.class));
-        }
-
-        else if (item.getItemId() == R.id.help_tab) {
+        } else if (item.getItemId() == R.id.help_tab) {
             Toast.makeText(MapsActivity.this, "Help Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, HelpActivity.class));
         }
@@ -218,8 +261,12 @@ public class MapsActivity extends AppCompatActivity
             }
         });
 
-        // Prompt the user for permission.
-        getLocationPermission();
+        boolean locationAccessAllowed = false;
+        while (!locationAccessAllowed) {
+            // Prompt the user for permission.
+            getLocationPermission();
+            if (mLocationPermissionGranted) locationAccessAllowed = true;
+        }
 
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
@@ -238,6 +285,9 @@ public class MapsActivity extends AppCompatActivity
          */
         try {
             if (mLocationPermissionGranted) {
+                locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+                criteria = new Criteria();
+                bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true));
                 Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
                     @Override
@@ -245,10 +295,13 @@ public class MapsActivity extends AppCompatActivity
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = task.getResult();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                            if(mLastKnownLocation != null) {
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                        new LatLng(mLastKnownLocation.getLatitude(),
+                                                mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                            }
                         } else {
+                            //locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
                             mMap.moveCamera(CameraUpdateFactory
@@ -258,7 +311,7 @@ public class MapsActivity extends AppCompatActivity
                     }
                 });
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
@@ -304,119 +357,6 @@ public class MapsActivity extends AppCompatActivity
         updateLocationUI();
     }
 
-//    /**
-//     * Prompts the user to select the current place from a list of likely places, and shows the
-//     * current place on the map - provided the user has granted location permission.
-//     */
-//    private void showCurrentPlace() {
-//        if (mMap == null) {
-//            return;
-//        }
-//
-//        if (mLocationPermissionGranted) {
-//            // Get the likely places - that is, the businesses and other points of interest that
-//            // are the best match for the device's current location.
-//            @SuppressWarnings("MissingPermission") final
-//            Task<PlaceLikelihoodBufferResponse> placeResult =
-//                    mPlaceDetectionClient.getCurrentPlace(null);
-//            placeResult.addOnCompleteListener
-//                    (new OnCompleteListener<PlaceLikelihoodBufferResponse>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<PlaceLikelihoodBufferResponse> task) {
-//                            if (task.isSuccessful() && task.getResult() != null) {
-//                                PlaceLikelihoodBufferResponse likelyPlaces = task.getResult();
-//
-//                                // Set the count, handling cases where less than 5 entries are returned.
-//                                int count;
-//                                if (likelyPlaces.getCount() < M_MAX_ENTRIES) {
-//                                    count = likelyPlaces.getCount();
-//                                } else {
-//                                    count = M_MAX_ENTRIES;
-//                                }
-//
-//                                int i = 0;
-//                                mLikelyPlaceNames = new String[count];
-//                                mLikelyPlaceAddresses = new String[count];
-//                                mLikelyPlaceAttributions = new String[count];
-//                                mLikelyPlaceLatLngs = new LatLng[count];
-//
-//                                for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-//                                    // Build a list of likely places to show the user.
-//                                    mLikelyPlaceNames[i] = (String) placeLikelihood.getPlace().getName();
-//                                    mLikelyPlaceAddresses[i] = (String) placeLikelihood.getPlace()
-//                                            .getAddress();
-//                                    mLikelyPlaceAttributions[i] = (String) placeLikelihood.getPlace()
-//                                            .getAttributions();
-//                                    mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-//
-//                                    i++;
-//                                    if (i > (count - 1)) {
-//                                        break;
-//                                    }
-//                                }
-//
-//                                // Release the place likelihood buffer, to avoid memory leaks.
-//                                likelyPlaces.release();
-//
-//                                // Show a dialog offering the user the list of likely places, and add a
-//                                // marker at the selected place.
-//                                openPlacesDialog();
-//
-//                            } else {
-//                                Log.e(TAG, "Exception: %s", task.getException());
-//                            }
-//                        }
-//                    });
-//        } else {
-//            // The user has not granted permission.
-//            Log.i(TAG, "The user did not grant location permission.");
-//
-//            // Add a default marker, because the user hasn't selected a place.
-//            mMap.addMarker(new MarkerOptions()
-//                    .title(getString(R.string.default_info_title))
-//                    .position(mDefaultLocation)
-//                    .snippet(getString(R.string.default_info_snippet)));
-//
-//            // Prompt the user for permission.
-//            getLocationPermission();
-//        }
-//    }
-//
-//    /**
-//     * Displays a form allowing the user to select a place from a list of likely places.
-//     */
-//    private void openPlacesDialog() {
-//        // Ask the user to choose the place where they are now.
-//        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                // The "which" argument contains the position of the selected item.
-//                LatLng markerLatLng = mLikelyPlaceLatLngs[which];
-//                String markerSnippet = mLikelyPlaceAddresses[which];
-//                if (mLikelyPlaceAttributions[which] != null) {
-//                    markerSnippet = markerSnippet + "\n" + mLikelyPlaceAttributions[which];
-//                }
-//
-//                // Add a marker for the selected place, with an info window
-//                // showing information about that place.
-//                mMap.addMarker(new MarkerOptions()
-//                        .title(mLikelyPlaceNames[which])
-//                        .position(markerLatLng)
-//                        .snippet(markerSnippet));
-//
-//                // Position the map's camera at the location of the marker.
-//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
-//                        DEFAULT_ZOOM));
-//            }
-//        };
-//
-//        // Display the dialog.
-//        AlertDialog dialog = new AlertDialog.Builder(this)
-//                .setTitle(R.string.pick_place)
-//                .setItems(mLikelyPlaceNames, listener)
-//                .show();
-//    }
-
     /**
      * Updates the map's UI settings based on whether the user has granted location permission.
      */
@@ -434,72 +374,106 @@ public class MapsActivity extends AppCompatActivity
                 mLastKnownLocation = null;
                 getLocationPermission();
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
 
-    long timeInMilliseconds = 0L;
-    long timeSwapBuff = 0L;
-    long updatedTime = 0L;
+    double timeInMilliseconds = 0L;
+    double timeSwapBuff = 0L;
+    double updatedTime = 0L;
 
-    //runs without a timer by reposting this handler at the end of the runnable
+//    //runs without a timer by reposting this handler at the end of the runnable
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
 
         @Override
         public void run() {
+            DecimalFormat df = new DecimalFormat("00");
+
             timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
 
             updatedTime = timeSwapBuff + timeInMilliseconds;
 
-            int secs = (int) (updatedTime / 1000);
-            int mins = secs / 60;
+            double secs = (int) (updatedTime / 1000);
+            double mins = secs / 60;
             secs = secs % 60;
-            int milliseconds = (int) (updatedTime % 1000);
-            timerTextView.setText("" + String.format("%02d",mins) + ":"
-                    + String.format("%02d", secs) + ":"
-                    + String.format("%02d", milliseconds));
-            timerHandler.postDelayed(this, 0);
+            double milliseconds = (updatedTime % 1000);
+//
+            timerTextView.setText("" + df.format(mins) + ":"
+                    + df.format(secs) + ":"
+                    + df.format(milliseconds));
+            timerHandler.postDelayed(this, 5);
         }
     };
 
     @Override
     public void onClick(View view) {
-        if(view == startRunBtn)
-        {
+        if (view == startRunBtn) {
 //            if(startRunBtn.getText().toString().trim().contains("Start Run")) Toast.makeText(MapsActivity.this, startRunBtn.getText().toString(), Toast.LENGTH_SHORT).show();
-            if(startRunBtn.getText().toString().trim().contains("Start Run")) {
+            if (startRunBtn.getText().toString().trim().contains("Start Run")) {
+                if(mLastKnownLocation != null) {
+                    Location myLocation = mLastKnownLocation;
+                    LatLng myPosition = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+                    MarkerOptions currentLocationMarker = new MarkerOptions()
+                            .position(myPosition)
+                            .title("Start of Run");
+                    mMap.addMarker(currentLocationMarker);
+                }
+                getDeviceLocation();
                 startRunBtn.setText("End Run");
                 Toast.makeText(MapsActivity.this, "Run Started!", Toast.LENGTH_SHORT).show();
                 startTime = SystemClock.uptimeMillis();
+//                timer.start();
                 timerHandler.postDelayed(timerRunnable, 0);
 
-            }
-            else if(startRunBtn.getText().toString().trim().contains("End Run")){
+            } else if (startRunBtn.getText().toString().trim().contains("End Run")) {
                 startRunBtn.setText("Start Run");
-                //Toast.makeText(MapsActivity.this, "Run Ended!", Toast.LENGTH_SHORT).show();
-                Toast toast= Toast.makeText(getApplicationContext(),
-                        "You ran: " + timerTextView.getText() + "!", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0 , 0);
+                if(mLastKnownLocation != null) {
+                    Location myLocation = mLastKnownLocation;
+                    LatLng myPosition = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+                    MarkerOptions currentLocationMarker = new MarkerOptions()
+                            .position(myPosition)
+                            .title("End of Run");
+                    mMap.addMarker(currentLocationMarker);
+                }
+
+//                DecimalFormat df = new DecimalFormat("0.00");
+
+//                timer.stop();
+                distanceRanInMiles = getDistanceRun(steps);
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "You ran: " + timerTextView.getText() + "!\n" + "You ran: " + String.format("%.2f", distanceRanInMiles) + "miles", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
                 Run temp = new Run();
                 temp.setRunTime(timerTextView);
+                temp.setDistanceRan(distanceRanInMiles);
                 listOfRuns.add(temp);
                 printListOfRuns(); //print statement remove when done ***********************************************************
                 timerHandler.removeCallbacks(timerRunnable);
-                timerTextView.setText("" + String.format("%02d", 00) + ":"
-                        + String.format("%02d", 00) + ":"
-                        + String.format("%02d", 00));
+                timerTextView.setText("00:00:00");
+                steps = 0;
+
+                System.out.println("Run Time: " + temp.getRunTimeInMinutes() + "mins");
+                System.out.println("Distance Ran: " + temp.getDistanceRan() + "miles");
+//                System.out.println("Distance in Minutes: " + df.format(temp.getRunTimeInMinutes()) + "mins");
+//                System.out.println("Distance ran: " + temp.getDistanceRan() + "miles");
+
+                Intent i = new Intent(this, GoalsActivity.class);
+                double runTimePerMile = temp.getRunTimeInMinutes()/Double.parseDouble(temp.getDistanceRan());
+                System.out.println("Run Time Per Mile: " + runTimePerMile + "/mins");
+                i.putExtra("Run Time Per Mile",runTimePerMile);
+                i.putExtra("Distance", temp.getDistanceRan());
+                startActivity(i);
+//                timer.setBase(SystemClock.elapsedRealtime());
             }
         }
     }
 
-    public String printListOfRuns()
-    {
-        for(Run r: listOfRuns)
-        {
-            System.out.println(r.getRunTime() + "\n");
+    public String printListOfRuns() {
+        for (Run r : listOfRuns) {
+            System.out.println(r.getRunTime() + "\n" + r.getDistanceRan() + "\n" + r.getDateOfRun() + "\n");
         }
 
         return "\n";
@@ -513,71 +487,82 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         loadData(this);
+        mSensorManager.registerListener(mLightSensorListener, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    public boolean saveData()
-    {
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mSensorManager.unregisterListener(mLightSensorListener, stepSensor);
+    }
+
+    public void saveData() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor mEdit1 = sp.edit();
 
         //Put the array size in for so when you retrieve the data you know how long the data is
         mEdit1.putInt("ArraySize", listOfRuns.size());
 
-        for(int i=0;i<listOfRuns.size();i++)
-        {
-            mEdit1.remove("Run" + i);
-            mEdit1.putString("Run" + i, listOfRuns.get(i).getRunTime());
+        for (int i = 0; i < listOfRuns.size(); i++) {
+            mEdit1.remove("Run Time" + i);
+            mEdit1.remove("Run Distance" + i);
+            mEdit1.remove("Run Date" + i);
+            mEdit1.putString("Run Time" + i, listOfRuns.get(i).getRunTime());
+            mEdit1.putString("Run Distance" + i, listOfRuns.get(i).getDistanceRan());
+            mEdit1.putString("Run Date" + i, listOfRuns.get(i).getDateOfRun());
         }
 
-        return mEdit1.commit();
+        mEdit1.apply();
     }
 
-    public void loadData(Context mContext)
-    {
-        SharedPreferences mSharedPreference1 =   PreferenceManager.getDefaultSharedPreferences(mContext);
+    public void loadData(Context mContext) {
+        SharedPreferences mSharedPreference1 = PreferenceManager.getDefaultSharedPreferences(mContext);
         listOfRuns.clear();
         int size = mSharedPreference1.getInt("ArraySize", 0);
 
-        for(int i=0;i<size;i++)
-        {
-            String tempStr = mSharedPreference1.getString("Run" + i, null);
+        for (int i = 0; i < size; i++) {
+            String tempStr = mSharedPreference1.getString("Run Time" + i, null);
             Run temp = new Run();
             temp.setRunTime(tempStr);
+            tempStr = mSharedPreference1.getString("Run Distance" + i, null);
+            temp.setDistanceRan(Double.parseDouble(tempStr));
+            tempStr = mSharedPreference1.getString("Run Date" + i, null);
+            temp.setDateOfRun(tempStr);
             listOfRuns.add(temp);
         }
     }
 
-    public boolean eraseData()
-    {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor mEdit1 = sp.edit();
-
-        //Put the array size in for so when you retrieve the data you know how long the data is
-        mEdit1.putInt("ArraySize", 0);
-
-        for(int i=0;i<listOfRuns.size();i++)
-        {
-            mEdit1.remove("Run" + i);
-        }
-
-        return mEdit1.commit();
+    //function to determine the distance run in kilometers using average step length for men and number of steps
+    public double getDistanceRun(double stepsRan) {
+        stepsRan = 700; //delete this hardcoded for debuggggggggggggggggingggggggggggggggg
+        double distance = (stepsRan * 78) / (double) 100000;
+        distance /= 1.609344;
+        return distance;
     }
 
     public class Run
     {
-        int minutes;
-        int seconds;
-        int milliseconds;
+        double minutes;
+        double seconds;
+        double milliseconds;
+        double distanceInMiles;
+        String date;
 
         public Run()
         {
             minutes = 0;
             seconds = 0;
             milliseconds = 0;
+            distanceInMiles = 0;
+            date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(new Date());
+        }
+
+        void setDistanceRan(double distance)
+        {
+            distanceInMiles = distance;
         }
 
         void setRunTime(TextView view)
@@ -592,7 +577,7 @@ public class MapsActivity extends AppCompatActivity
                 {
                     if(onMinutes)
                     {
-                        minutes = Integer.parseInt(valueStr);
+                        minutes = Double.parseDouble(valueStr);
                         onMinutes = false;
                         onSeconds = true;
                         valueStr = "";
@@ -600,14 +585,20 @@ public class MapsActivity extends AppCompatActivity
 
                     else if(onSeconds)
                     {
-                        seconds = Integer.parseInt(valueStr);
+                        seconds = Double.parseDouble(valueStr);
                         valueStr = temp.substring(i+1,i+3);
-                        milliseconds = Integer.parseInt(valueStr);
+                        milliseconds = Double.parseDouble(valueStr);
+                        onSeconds = false;
                     }
                 }
                 else
                     valueStr += temp.charAt(i);
             }
+        }
+
+        void setDateOfRun(String newDate)
+        {
+            date = newDate;
         }
 
         void setRunTime(String str)
@@ -622,7 +613,7 @@ public class MapsActivity extends AppCompatActivity
                 {
                     if(onMinutes)
                     {
-                        minutes = Integer.parseInt(valueStr);
+                        minutes = Double.parseDouble(valueStr);
                         onMinutes = false;
                         onSeconds = true;
                         valueStr = "";
@@ -630,9 +621,10 @@ public class MapsActivity extends AppCompatActivity
 
                     else if(onSeconds)
                     {
-                        seconds = Integer.parseInt(valueStr);
+                        seconds = Double.parseDouble(valueStr);
                         valueStr = temp.substring(i+1,i+3);
-                        milliseconds = Integer.parseInt(valueStr);
+                        milliseconds = Double.parseDouble(valueStr);
+                        onSeconds = false;
                     }
                 }
                 else
@@ -642,9 +634,42 @@ public class MapsActivity extends AppCompatActivity
 
         String getRunTime()
         {
-            return "" + String.format("%02d",minutes) + ":"
-                    + String.format("%02d", seconds) + ":"
-                    + String.format("%02d", milliseconds);
+//            DecimalFormat df = new DecimalFormat("00");
+//            System.out.println("Mins: " + df.format(minutes));
+//            System.out.println("Seconds: " + df.format(seconds));
+//            System.out.println("MS: " + df.format(milliseconds));
+            return "" + String.format("%.0f", minutes) + ":"
+                    + String.format("%.0f", seconds) + ":"
+                    + String.format("%.0f", milliseconds);
+//            return "" + minutes + ":"
+//                    + seconds + ":"
+//                    + milliseconds;
+        }
+
+        double getRunTimeInMinutes()
+        {
+//            DecimalFormat df = new DecimalFormat("0.00");
+
+//            System.out.println("MS: " + milliseconds);
+//            System.out.println("MS to Mins: " + (milliseconds/(double)1000)/60);
+//            System.out.println("Secs: " + seconds);
+//            System.out.println("Secs to Mins: " + seconds/(double)60);
+//            System.out.println("MS: " + milliseconds);
+//            double temp = minutes + (seconds/60.00) + ((milliseconds/1000.00)/60);
+//            System.out.println("Mins: " + temp);
+//            System.out.println("Time in Minutes (Float): " + df.format(temp));
+            return minutes + (seconds/60.00) + ((milliseconds/1000.00)/60);
+        }
+
+        String getDistanceRan()
+        {
+//            DecimalFormat df = new DecimalFormat("0.00");
+            return "" + String.format("%.2f", distanceInMiles);
+        }
+
+        String getDateOfRun()
+        {
+            return date;
         }
     }
 }

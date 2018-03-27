@@ -11,4 +11,31 @@
         android:layout_alignParentTop="true"
         android:textSize="20dp"
         android:text="@string/health_insurance_page_overview"/>
+    <Button
+        android:id="@+id/createNewProfileButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewHealthInsuranceOverview"
+        android:text="@string/setProfileButtonText"
+        android:onClick="onClick"/>
+    <Button
+        android:id="@+id/updateRunningDataButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewHealthInsuranceOverview"
+        android:layout_toRightOf="@+id/createNewProfileButton"
+        android:text="@string/updateRunningDataText"
+        android:onClick="onClick"/>
+    <EditText
+        android:id="@+id/userIDEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createNewProfileButton"
+        android:text="@string/enterUserIDText"/>
+    <EditText
+        android:id="@+id/userNameEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userIDEditText"
+        android:text="@string/enterUserNameText"/>
 </RelativeLayout>

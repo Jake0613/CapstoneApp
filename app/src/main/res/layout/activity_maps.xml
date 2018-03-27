@@ -21,7 +21,6 @@
         android:layout_height="100dp"
         android:layout_gravity="center|top"
         android:textSize="30dp"
-        android:text="Timer"
         android:layout_marginBottom="20dp"/>
 </fragment>
 

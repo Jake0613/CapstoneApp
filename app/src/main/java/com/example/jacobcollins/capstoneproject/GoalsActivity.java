@@ -3,13 +3,11 @@ package com.example.jacobcollins.capstoneproject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -33,21 +31,23 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
 
     private ProgressBar mileTimeProgressBar;
 
-    private boolean OneMileDistanceGoal = false;
-    private boolean FiveMilesDistanceGoal = false;
-    private boolean TenMilesDistanceGoal = false;
-    private boolean TwentyMilesDistanceGoal = false;
-    private boolean FiftyMilesDistanceGoal = false;
-    private boolean OneHundredMilesDistanceGoal = false;
+    private double amountOfMilesRan = 0.0;
 
-    private boolean NineMinuteTimeGoal = false;
-    private boolean EightMinuteTimeGoal = false;
-    private boolean SevenMinuteTimeGoal = false;
-    private boolean SixMinuteTimeGoal = false;
-    private boolean FiveMinuteTimeGoal = false;
-
-    private int progressDistanceAmount = 0;
-    private int progressMileTimeAmount = 0;
+//    private boolean OneMileDistanceGoal = false;
+//    private boolean FiveMilesDistanceGoal = false;
+//    private boolean TenMilesDistanceGoal = false;
+//    private boolean TwentyMilesDistanceGoal = false;
+//    private boolean FiftyMilesDistanceGoal = false;
+//    private boolean OneHundredMilesDistanceGoal = false;
+//
+//    private boolean NineMinuteTimeGoal = false;
+//    private boolean EightMinuteTimeGoal = false;
+//    private boolean SevenMinuteTimeGoal = false;
+//    private boolean SixMinuteTimeGoal = false;
+//    private boolean FiveMinuteTimeGoal = false;
+//
+//    private int progressDistanceAmount = 0;
+//    private int progressMileTimeAmount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +70,61 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         checkBoxFiveMinuteMile = findViewById(R.id.checkBox5MinuteMileTime);
 
         mileTimeProgressBar = findViewById(R.id.mileTimeProgressBar);
+    }
+
+    public boolean hasDistanceGoal()
+    {
+        if(checkBoxOneMile.isChecked()) return true;
+        else if(checkBoxFiveMiles.isChecked()) return true;
+        else if(checkBoxTenMiles.isChecked()) return true;
+        else if(checkBoxTwentyMiles.isChecked()) return true;
+        else if(checkBoxFiftyMiles.isChecked()) return true;
+        else if(checkBoxOneHundredMiles.isChecked()) return true;
+        return false;
+    }
+
+    public boolean hasMileTimeGoal()
+    {
+        if(checkBoxNineMinuteMile.isChecked()) return true;
+        else if(checkBoxEightMinuteMile.isChecked()) return true;
+        else if(checkBoxSevenMinuteMile.isChecked()) return true;
+        else if(checkBoxSixMinuteMile.isChecked()) return true;
+        else if(checkBoxFiveMinuteMile.isChecked()) return true;
+        return false;
+    }
+
+    public double findDistanceGoal()
+    {
+        double value = 0;
+        if(checkBoxOneMile.isChecked())
+            value = 1.00;
+        else if(checkBoxFiveMiles.isChecked())
+            value = 5.00;
+        else if(checkBoxTenMiles.isChecked())
+            value = 10.00;
+        else if(checkBoxTwentyMiles.isChecked())
+            value = 20.00;
+        else if(checkBoxFiftyMiles.isChecked())
+            value = 50.00;
+        else if(checkBoxOneHundredMiles.isChecked())
+            value = 100.00;
+        return value;
+    }
+
+    public double findMileTimeGoal()
+    {
+        double value = 0;
+        if(checkBoxNineMinuteMile.isChecked())
+            value = 9.00;
+        else if(checkBoxEightMinuteMile.isChecked())
+             value = 8.00;
+        else if(checkBoxSevenMinuteMile.isChecked())
+            value = 7.00;
+        else if(checkBoxSixMinuteMile.isChecked())
+            value = 6.00;
+        else if(checkBoxFiveMinuteMile.isChecked())
+            value = 5.00;
+        return value;
     }
 
     public void distanceCheckboxClicked(View view)
@@ -169,6 +224,7 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
     @Override
     public void onPause() {
         super.onPause();
+        System.out.println("in on Pause");
         saveData();
     }
 
@@ -176,10 +232,68 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
     public void onResume()
     {
         super.onResume();
+        System.out.println("in on Resume");
         loadData(this);
+        Bundle extras = getIntent().getExtras();
+        System.out.println("In onCreate MapsActivity");
+        if (extras != null)
+        {
+            System.out.println("In Intent");
+//            System.out.println("Has MileTimeGoal: " + hasMileTimeGoal());
+//            System.out.println("Has DistanceGoal: " + hasDistanceGoal());
+//            System.out.println("FiveMinuteMile Box is Checked: " + checkBoxFiveMinuteMile.isChecked());
+//            System.out.println("SixMinuteMile Box is Checked: " + checkBoxSixMinuteMile.isChecked());
+//            System.out.println("SevenMinuteMile Box is Checked: " + checkBoxSevenMinuteMile.isChecked());
+//            System.out.println("EightMinuteMile Box is Checked: " + checkBoxEightMinuteMile.isChecked());
+//            System.out.println("NineMinuteMile Box is Checked: " + checkBoxNineMinuteMile.isChecked());
+//            System.out.println(mileTimeProgressBar.getProgress());
+            if(hasMileTimeGoal()) {
+                System.out.println("In MileTime Goal");
+                double runTimePerMile = extras.getDouble("Run Time Per Mile");
+                double mileTimeGoal = findMileTimeGoal();
+                if (mileTimeGoal <= runTimePerMile) {
+                    System.out.println("MileTimeGoal Completed");
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "You completed your mile time goal!", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    mileTimeProgressBar.setProgress(0);
+                } else {
+                    double temp = mileTimeGoal / runTimePerMile;
+                    int progressNow = (int) temp;
+                    System.out.println("Progress MileTime: " + progressNow);
+                    mileTimeProgressBar.setProgress(progressNow);
+                }
+            }
+
+            if(hasDistanceGoal()) {
+                System.out.println("In Distance Goal");
+                double distanceRan = Double.parseDouble(extras.getString("Distance"));
+                amountOfMilesRan += distanceRan;
+                double amountOfMilesRanGoal = findDistanceGoal();
+                System.out.println("Miles Ran Total: " + amountOfMilesRan);
+                if (amountOfMilesRanGoal <= amountOfMilesRan)
+                {
+                    System.out.println("DistanceGoal Completed");
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "You completed your mile distance goal!", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    distanceProgressBar.setProgress(0);
+                    amountOfMilesRan = 0;
+                }
+                else
+                {
+                    double temp = amountOfMilesRanGoal/amountOfMilesRan;
+                    int progressNow = (int) temp;
+                    System.out.println("Progress Distance: " + progressNow);
+                    distanceProgressBar.setProgress(progressNow);
+                }
+            }
+        }
     }
 
-    public boolean saveData()
+    public void saveData()
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor mEdit1 = sp.edit();
@@ -202,8 +316,9 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         else if(checkBoxFiveMinuteMile.isChecked()) mEdit1.putString("mileTimeCheckBox", "5");
 
         mEdit1.putInt("mileTimeProgressBar Amount", mileTimeProgressBar.getProgress());
+        mEdit1.putString("distanceRanTotal", "" + amountOfMilesRan);
 
-        return mEdit1.commit();
+        mEdit1.apply();
     }
 
     public void loadData(Context mContext)
@@ -215,27 +330,77 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         if(mSharedPreference1.contains("distanceCheckBox"))
         {
             String temp = mSharedPreference1.getString("distanceCheckBox", null);
-
-            if (temp.equals("1")) checkBoxOneMile.setChecked(true);
-            else if (temp.equals("5")) checkBoxFiveMiles.setChecked(true);
-            else if (temp.equals("10")) checkBoxTenMiles.setChecked(true);
-            else if (temp.equals("20")) checkBoxTwentyMiles.setChecked(true);
-            else if (temp.equals("50")) checkBoxFiftyMiles.setChecked(true);
-            else if (temp.equals("100")) checkBoxOneHundredMiles.setChecked(true);
+            System.out.println("distanceBoxChecked: " + temp);
+            if (temp != null) {
+                switch (temp) {
+                    case "1":
+                        checkBoxOneMile.setChecked(true);
+                        break;
+                    case "5":
+                        checkBoxFiveMiles.setChecked(true);
+                        break;
+                    case "10":
+                        checkBoxTenMiles.setChecked(true);
+                        break;
+                    case "20":
+                        checkBoxTwentyMiles.setChecked(true);
+                        break;
+                    case "50":
+                        checkBoxFiftyMiles.setChecked(true);
+                        break;
+                    case "100":
+                        checkBoxOneHundredMiles.setChecked(true);
+                        break;
+                }
+            }
         }
 
-        if(mSharedPreference1.contains("mileTimeProgressBar Amount")) mileTimeProgressBar.setProgress((mSharedPreference1.getInt("mileTimeProgressBar Amount", 0)));
+        if(mSharedPreference1.contains("mileTimeProgressBar Amount"))
+        {
+            System.out.println(mSharedPreference1.getInt("mileTimeProgressBar Amount", 0));
+            mileTimeProgressBar.setProgress((mSharedPreference1.getInt("mileTimeProgressBar Amount", 0)));
+        }
 
         if(mSharedPreference1.contains("mileTimeCheckBox"))
         {
             String temp = mSharedPreference1.getString("mileTimeCheckBox", null);
-
-            if (temp.equals("9")) checkBoxNineMinuteMile.setChecked(true);
-            else if (temp.equals("8")) checkBoxEightMinuteMile.setChecked(true);
-            else if (temp.equals("7")) checkBoxSevenMinuteMile.setChecked(true);
-            else if (temp.equals("6")) checkBoxSixMinuteMile.setChecked(true);
-            else if (temp.equals("5")) checkBoxFiveMinuteMile.setChecked(true);
+            System.out.println("mileTimeCheckBoxChecked: " + temp);
+            if (temp != null) {
+                switch (temp) {
+                    case "9":
+                        checkBoxNineMinuteMile.setChecked(true);
+                        break;
+                    case "8":
+                        checkBoxEightMinuteMile.setChecked(true);
+                        break;
+                    case "7":
+                        checkBoxSevenMinuteMile.setChecked(true);
+                        break;
+                    case "6":
+                        checkBoxSixMinuteMile.setChecked(true);
+                        break;
+                    case "5":
+                        checkBoxFiveMinuteMile.setChecked(true);
+                        break;
+                }
+            }
         }
+
+        if(mSharedPreference1.contains("distanceRanTotal"))
+        {
+            System.out.println("AmountOfMilesRan: " + amountOfMilesRan);
+            amountOfMilesRan = Double.parseDouble(mSharedPreference1.getString("distanceRanTotal", null));
+        }
+
+        clearData();
+    }
+
+    public void clearData()
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor mEdit1 = sp.edit();
+
+        mEdit1.clear();
     }
 
     @Override
