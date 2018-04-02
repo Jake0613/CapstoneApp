@@ -13,6 +13,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -102,7 +104,7 @@ public class MapsActivity extends AppCompatActivity
 
     //private LatLng startOfRunCoords = new LatLng();
 
-    ArrayList<Run> listOfRuns = new ArrayList<>();
+    private ArrayList<Run> listOfRuns = new ArrayList<>();
 
     private double steps = 0;
 
@@ -543,7 +545,7 @@ public class MapsActivity extends AppCompatActivity
         return distance;
     }
 
-    public class Run
+    public static class Run implements Parcelable
     {
         double minutes;
         double seconds;
@@ -670,6 +672,69 @@ public class MapsActivity extends AppCompatActivity
         String getDateOfRun()
         {
             return date;
+        }
+
+        // Parcelling part
+        Run(Parcel in){
+            String[] data = new String[5];
+
+            in.readStringArray(data);
+            // the order needs to be the same as in writeToParcel() method
+            this.minutes = Double.parseDouble(data[0]);
+            this.seconds = Double.parseDouble(data[1]);
+            this.milliseconds = Double.parseDouble(data[2]);
+            this.distanceInMiles = Double.parseDouble(data[3]);
+            this.date = data[4];
+        }
+
+        @Override
+        public int describeContents(){
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeStringArray(new String[] {this.minutes + "",
+                    this.seconds + "",
+                    this.milliseconds + "",
+                    this.distanceInMiles + "",
+                    this.date});
+        }
+        public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+            public Run createFromParcel(Parcel in) {
+                return new Run(in);
+            }
+
+            public Run[] newArray(int size) {
+                return new Run[size];
+            }
+        };
+    }
+
+    final int NO_RUNNING_DATA_TO_SEND = 0;
+    final int REQUEST_RUNNING_DATA = 1;
+    final int SENT_RUNNING_DATA = 2;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (resultCode == RESULT_OK)
+        {
+            if (requestCode == REQUEST_RUNNING_DATA)
+            {
+                Intent intent = new Intent(this, HealthInsuranceActivity.class);
+                if(listOfRuns.size() == 0)
+                {
+                    startActivityForResult(intent, NO_RUNNING_DATA_TO_SEND);
+                }
+                else
+                {
+                    for (int i = 0; i < listOfRuns.size(); i++) {
+                        intent.putExtra("Run 1", listOfRuns.get(i));
+                    }
+                    startActivityForResult(intent, SENT_RUNNING_DATA);
+                    listOfRuns.clear();
+                }
+            }
         }
     }
 }
