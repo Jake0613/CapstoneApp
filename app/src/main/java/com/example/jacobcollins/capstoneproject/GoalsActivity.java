@@ -137,6 +137,25 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         unCheckOtherMileTimeBoxesOtherThan(view);
     }
 
+    public void unCheckAllDistanceBoxes()
+    {
+        checkBoxOneMile.setChecked(false);
+        checkBoxFiveMiles.setChecked(false);
+        checkBoxTenMiles.setChecked(false);
+        checkBoxTwentyMiles.setChecked(false);
+        checkBoxFiftyMiles.setChecked(false);
+        checkBoxOneHundredMiles.setChecked(false);
+    }
+
+    public void unCheckAllTimeBoxes()
+    {
+        checkBoxNineMinuteMile.setChecked(false);
+        checkBoxEightMinuteMile.setChecked(false);
+        checkBoxSevenMinuteMile.setChecked(false);
+        checkBoxSixMinuteMile.setChecked(false);
+        checkBoxFiveMinuteMile.setChecked(false);
+    }
+
     public void unCheckOtherDistanceBoxesOtherThan(View view)
     {
         switch (view.getId()) {
@@ -257,6 +276,7 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
                             "You completed your mile time goal!", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
+                    unCheckAllTimeBoxes();
                     mileTimeProgressBar.setProgress(0);
                 } else {
                     double temp = mileTimeGoal / runTimePerMile;
@@ -272,6 +292,7 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
                 amountOfMilesRan += distanceRan;
                 double amountOfMilesRanGoal = findDistanceGoal();
                 System.out.println("Miles Ran Total: " + amountOfMilesRan);
+                System.out.println("Miles Ran Goal: " + amountOfMilesRanGoal);
                 if (amountOfMilesRanGoal <= amountOfMilesRan)
                 {
                     System.out.println("DistanceGoal Completed");
@@ -279,12 +300,13 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
                             "You completed your mile distance goal!", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
+                    unCheckAllDistanceBoxes();
                     distanceProgressBar.setProgress(0);
                     amountOfMilesRan = 0;
                 }
                 else
                 {
-                    double temp = amountOfMilesRanGoal/amountOfMilesRan;
+                    double temp = (amountOfMilesRan/amountOfMilesRanGoal)*100;
                     int progressNow = (int) temp;
                     System.out.println("Progress Distance: " + progressNow);
                     distanceProgressBar.setProgress(progressNow);
