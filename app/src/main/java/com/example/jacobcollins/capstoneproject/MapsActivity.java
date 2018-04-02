@@ -717,10 +717,13 @@ public class MapsActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        System.out.println("In Activity Result");
         if (resultCode == RESULT_OK)
         {
+            System.out.println("In Activity RESULT_OK");
             if (requestCode == REQUEST_RUNNING_DATA)
             {
+                System.out.println("In Activity REQUEST_RUNNING_DATA");
                 Intent intent = new Intent(this, HealthInsuranceActivity.class);
                 if(listOfRuns.size() == 0)
                 {

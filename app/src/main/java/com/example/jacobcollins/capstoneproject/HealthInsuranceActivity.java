@@ -40,7 +40,10 @@ public class HealthInsuranceActivity extends AppCompatActivity {
         userIDEditText = findViewById(R.id.userIDEditText);
         userNameEditText = findViewById(R.id.userNameEditText);
 
+        updateProfileButton.setEnabled(false);
+
         if(hasCreatedProfile) createProfileButton.setEnabled(false);
+        if(hasCreatedProfile) updateProfileButton.setEnabled(true);
     }
 
     public void onClick(View v)
@@ -53,6 +56,7 @@ public class HealthInsuranceActivity extends AppCompatActivity {
                 hasCreatedProfile = true;
                 createProfileButton.setEnabled(false);
                 System.out.println(userId);
+                updateProfileButton.setEnabled(true);
             }
         }
 
@@ -60,10 +64,10 @@ public class HealthInsuranceActivity extends AppCompatActivity {
         if(v == updateProfileButton)
         {
             Intent intent = new Intent(this, MapsActivity.class);
+            setResult(RESULT_OK, intent);
             startActivityForResult(intent, REQUEST_RUNNING_DATA);
 
             //send data to the database and clear the listOfRunsArray
-            listOfRuns.clear();
         }
     }
 
