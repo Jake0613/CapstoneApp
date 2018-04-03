@@ -243,7 +243,7 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
     @Override
     public void onPause() {
         super.onPause();
-        System.out.println("in on Pause");
+        System.out.println("Goals: in on Pause");
         saveData();
     }
 
@@ -251,7 +251,7 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
     public void onResume()
     {
         super.onResume();
-        System.out.println("in on Resume");
+        System.out.println("Goals: in on Resume");
         loadData(this);
         Bundle extras = getIntent().getExtras();
         System.out.println("In onCreate MapsActivity");
@@ -315,12 +315,27 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         }
     }
 
+    public void clearPrefsOfGoalData()
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor mEdit1 = sp.edit();
+
+        mEdit1.remove("distanceCheckBox");
+        mEdit1.remove("distanceProgressBar Amount");
+        mEdit1.remove("mileTimeCheckBox");
+        mEdit1.remove("mileTimeProgressBar Amount");
+        mEdit1.remove("distanceRanTotal");
+
+        mEdit1.commit();
+    }
+
     public void saveData()
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor mEdit1 = sp.edit();
 
-        mEdit1.clear();
+        clearPrefsOfGoalData();
+//        mEdit1.clear();
 
         if(checkBoxOneMile.isChecked()) mEdit1.putString("distanceCheckBox", "1");
         else if(checkBoxFiveMiles.isChecked()) mEdit1.putString("distanceCheckBox", "5");
@@ -414,7 +429,7 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
             amountOfMilesRan = Double.parseDouble(mSharedPreference1.getString("distanceRanTotal", null));
         }
 
-        clearData();
+//        clearData();
     }
 
     public void clearData()

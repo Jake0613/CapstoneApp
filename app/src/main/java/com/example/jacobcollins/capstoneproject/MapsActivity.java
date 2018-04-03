@@ -1,5 +1,6 @@
 package com.example.jacobcollins.capstoneproject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -170,7 +171,6 @@ public class MapsActivity extends AppCompatActivity
         if (mSensorManager != null) {
             stepSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         }
-
 //        timer = (Chronometer) findViewById(R.id.timer);
     }
 
@@ -493,6 +493,23 @@ public class MapsActivity extends AppCompatActivity
         super.onResume();
         loadData(this);
         mSensorManager.registerListener(mLightSensorListener, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        Intent returnIntent = getIntent();
+        if(returnIntent.getExtras() != null) {
+            System.out.println("In returnIntent");
+            if (listOfRuns.size() == 0) {
+                System.out.println("Has No Runs");
+                setResult(Activity.RESULT_CANCELED, returnIntent);
+                finish();
+            } else {
+                for (int i = 0; i < listOfRuns.size(); i++) {
+                    System.out.println("Has Runs");
+                    returnIntent.putExtra("Run " + i, listOfRuns.get(i));
+                }
+                listOfRuns.clear();
+                setResult(Activity.RESULT_OK, returnIntent);
+            }
+            finish();
+        }
     }
 
     @Override
@@ -714,30 +731,32 @@ public class MapsActivity extends AppCompatActivity
     final int NO_RUNNING_DATA_TO_SEND = 0;
     final int REQUEST_RUNNING_DATA = 1;
     final int SENT_RUNNING_DATA = 2;
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        System.out.println("In Activity Result");
-        if (resultCode == RESULT_OK)
-        {
-            System.out.println("In Activity RESULT_OK");
-            if (requestCode == REQUEST_RUNNING_DATA)
-            {
-                System.out.println("In Activity REQUEST_RUNNING_DATA");
-                Intent intent = new Intent(this, HealthInsuranceActivity.class);
-                if(listOfRuns.size() == 0)
-                {
-                    startActivityForResult(intent, NO_RUNNING_DATA_TO_SEND);
-                }
-                else
-                {
-                    for (int i = 0; i < listOfRuns.size(); i++) {
-                        intent.putExtra("Run 1", listOfRuns.get(i));
-                    }
-                    startActivityForResult(intent, SENT_RUNNING_DATA);
-                    listOfRuns.clear();
-                }
-            }
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+//    {
+//        System.out.println("In Activity Result");
+//        if (resultCode == RESULT_OK)
+//        {
+//            System.out.println("In Activity RESULT_OK");
+//            if (requestCode == REQUEST_RUNNING_DATA)
+//            {
+//                System.out.println("In Activity REQUEST_RUNNING_DATA");
+//                Intent intent = new Intent(this, HealthInsuranceActivity.class);
+//                if(listOfRuns.size() == 0)
+//                {
+//                    setResult(Activity.RESULT_CANCELED,intent);
+//                    finish();
+//                }
+//                else
+//                {
+//                    for (int i = 0; i < listOfRuns.size(); i++) {
+//                        intent.putExtra("Run 1", listOfRuns.get(i));
+//                    }
+//                    listOfRuns.clear();
+//                    setResult(Activity.RESULT_OK,intent);
+//                    finish();
+//                }
+//            }
+//        }
+//    }
 }

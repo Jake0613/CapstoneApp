@@ -53,6 +53,7 @@ public class HealthInsuranceActivity extends AppCompatActivity {
             if(userIDEditText.getText().length()==9 && containsOnlyNumbers(userIDEditText.getText()+""))
             {
                 userId = userIDEditText.getText()+"";
+                userName = userNameEditText.getText()+"";
                 hasCreatedProfile = true;
                 createProfileButton.setEnabled(false);
                 System.out.println(userId);
@@ -65,6 +66,7 @@ public class HealthInsuranceActivity extends AppCompatActivity {
         {
             Intent intent = new Intent(this, MapsActivity.class);
             setResult(RESULT_OK, intent);
+            intent.putExtra("Run Data Request", 100);
             startActivityForResult(intent, REQUEST_RUNNING_DATA);
 
             //send data to the database and clear the listOfRunsArray
@@ -84,12 +86,14 @@ public class HealthInsuranceActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
+        System.out.println("HealthInsurance: in on Pause");
         saveData();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        System.out.println("HealthInsurance: in on Resume");
         loadData(this);
     }
 
@@ -98,10 +102,14 @@ public class HealthInsuranceActivity extends AppCompatActivity {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor mEdit1 = sp.edit();
 
+        clearPrefsOfHealthInsuranceData();
+//        mEdit1.clear();
+
         if(userId != null)
             mEdit1.putString("User ID", userId);
         if(userName != null)
             mEdit1.putString("User Name", userName);
+        mEdit1.putBoolean("Created Profile?", hasCreatedProfile);
 
         mEdit1.apply();
     }
@@ -113,11 +121,43 @@ public class HealthInsuranceActivity extends AppCompatActivity {
         if(mSharedPreference1.contains("User ID"))
         {
             userId = mSharedPreference1.getString("User ID", null);
+            userIDEditText.setText(userId);
         }
         if(mSharedPreference1.contains("User Name"))
         {
             userName = mSharedPreference1.getString("User Name", null);
+            userNameEditText.setText(userName);
         }
+        if(mSharedPreference1.contains("Created Profile?"))
+        {
+            hasCreatedProfile = mSharedPreference1.getBoolean("Created Profile?", false);
+        }
+        if(hasCreatedProfile) {
+            createProfileButton.setEnabled(false);
+            updateProfileButton.setEnabled(true);
+        }
+
+//        clearData();
+    }
+
+    public void clearPrefsOfHealthInsuranceData()
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor mEdit1 = sp.edit();
+
+        mEdit1.remove("User ID");
+        mEdit1.remove("User Name");
+        mEdit1.remove("Created Profile?");
+
+        mEdit1.commit();
+    }
+
+    public void clearData()
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor mEdit1 = sp.edit();
+
+        mEdit1.clear();
     }
 
     final int NO_RUNNING_DATA_TO_SEND = 0;
@@ -128,23 +168,27 @@ public class HealthInsuranceActivity extends AppCompatActivity {
     {
         if (resultCode == RESULT_OK)
         {
-            if (requestCode == NO_RUNNING_DATA_TO_SEND)
-            {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "No Running Data Found", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            }
-
-            else if(requestCode == SENT_RUNNING_DATA)
-            {
-                Bundle runs = getIntent().getExtras();
-                for(int i=0;i<runs.size();i++)
-                {
-                    Run temp = runs.getParcelable("Run "+i);
+            System.out.println("In ResultOk HealthInsurance");
+            Bundle runs = getIntent().getExtras();
+            if(runs != null) {
+                for (int i = 0; i < runs.size(); i++) {
+                    Run temp = runs.getParcelable("Run " + i);
                     listOfRuns.add(temp);
                 }
             }
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Running Data Was Sent", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
+
+        else if(resultCode == RESULT_CANCELED)
+        {
+            System.out.println("In ResultCanceled HealthInsurance");
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "No Running Data Found", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
         }
     }
 }
