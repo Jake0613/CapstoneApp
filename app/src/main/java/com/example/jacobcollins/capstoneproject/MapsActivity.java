@@ -727,36 +727,4 @@ public class MapsActivity extends AppCompatActivity
             }
         };
     }
-
-    final int NO_RUNNING_DATA_TO_SEND = 0;
-    final int REQUEST_RUNNING_DATA = 1;
-    final int SENT_RUNNING_DATA = 2;
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-//    {
-//        System.out.println("In Activity Result");
-//        if (resultCode == RESULT_OK)
-//        {
-//            System.out.println("In Activity RESULT_OK");
-//            if (requestCode == REQUEST_RUNNING_DATA)
-//            {
-//                System.out.println("In Activity REQUEST_RUNNING_DATA");
-//                Intent intent = new Intent(this, HealthInsuranceActivity.class);
-//                if(listOfRuns.size() == 0)
-//                {
-//                    setResult(Activity.RESULT_CANCELED,intent);
-//                    finish();
-//                }
-//                else
-//                {
-//                    for (int i = 0; i < listOfRuns.size(); i++) {
-//                        intent.putExtra("Run 1", listOfRuns.get(i));
-//                    }
-//                    listOfRuns.clear();
-//                    setResult(Activity.RESULT_OK,intent);
-//                    finish();
-//                }
-//            }
-//        }
-//    }
 }

@@ -269,8 +269,11 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
             if(hasMileTimeGoal()) {
                 System.out.println("In MileTime Goal");
                 double runTimePerMile = extras.getDouble("Run Time Per Mile");
+                System.out.println("Mile Time: " + runTimePerMile);
                 double mileTimeGoal = findMileTimeGoal();
-                if (mileTimeGoal <= runTimePerMile) {
+                System.out.println("Mile Time Goal: " + mileTimeGoal);
+                System.out.println("mileTimeGoal <= runTimePerMile: " + (runTimePerMile <= mileTimeGoal));
+                if (runTimePerMile <= mileTimeGoal) {
                     System.out.println("MileTimeGoal Completed");
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "You completed your mile time goal!", Toast.LENGTH_LONG);

@@ -32,5 +32,5 @@
     <string name="setProfileButtonText">Create Profile</string>
     <string name="updateRunningDataText">Update Running Data</string>
     <string name="enterUserIDText">Enter Your ID Here (9 Digit, Numbers Only)</string>
-    <string name="enterUserNameText">Enter Your Name Here</string>
+    <string name="enterUserNameText">Enter Your Name Here (First Name, M.I., Last Name</string>
 </resources>
