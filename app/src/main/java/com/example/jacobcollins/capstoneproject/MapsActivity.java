@@ -494,8 +494,10 @@ public class MapsActivity extends AppCompatActivity
         loadData(this);
         mSensorManager.registerListener(mLightSensorListener, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
         Intent returnIntent = getIntent();
-        if(returnIntent.getExtras() != null) {
+        System.out.println("ReturnIntent Action: " + returnIntent.getAction());
+        if(returnIntent.getExtras() != null && returnIntent.getExtras().containsKey("Run Data Request")) {
             System.out.println("In returnIntent");
+//            returnIntent.removeExtra("Run Data Request");
             if (listOfRuns.size() == 0) {
                 System.out.println("Has No Runs");
                 setResult(Activity.RESULT_CANCELED, returnIntent);

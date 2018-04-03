@@ -58,6 +58,10 @@ public class HealthInsuranceActivity extends AppCompatActivity {
                 createProfileButton.setEnabled(false);
                 System.out.println(userId);
                 updateProfileButton.setEnabled(true);
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Profile Created", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
             }
         }
 
