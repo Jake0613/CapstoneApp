@@ -28,17 +28,17 @@
         android:layout_toRightOf="@+id/createNewProfileButton"
         android:text="@string/updateRunningDataText"
         android:onClick="onClick"/>
-    <EditText
-        android:id="@+id/userIDEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/createNewProfileButton"
-        android:inputType="textPassword"
-        android:hint="@string/enterUserIDText"/>
-    <EditText
-        android:id="@+id/userNameEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userIDEditText"
-        android:hint="@string/enterUserNameText"/>
+    <!--<EditText-->
+        <!--android:id="@+id/userIDEditText"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/createNewProfileButton"-->
+        <!--android:inputType="textPassword"-->
+        <!--android:hint="@string/enterUserIDText"/>-->
+    <!--<EditText-->
+        <!--android:id="@+id/userNameEditText"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/userIDEditText"-->
+        <!--android:hint="@string/enterUserNameText"/>-->
 </RelativeLayout>

@@ -44,7 +44,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -67,6 +66,17 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsActivity" />
+        </activity>
+        <activity
+            android:name=".AuthenticatorActivity"
+            android:label="User Login"
+            android:parentActivityName=".HealthInsuranceActivity"
+            android:screenOrientation="portrait">
+
+            <!-- android:theme="@style/AppTheme.NoActionBar" -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".HealthInsuranceActivity" />
         </activity>
         <activity
             android:name=".GoalsActivity"
