@@ -16,12 +16,6 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/game_tab"
-        android:orderInCategory="50"
-        android:title="Game">
-    </item>
-
-    <item
         android:id="@+id/health_insurance_tab"
         android:orderInCategory="100"
         android:title="Health Insurance">

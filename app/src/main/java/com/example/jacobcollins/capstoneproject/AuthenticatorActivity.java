@@ -1,7 +1,6 @@
 package com.example.jacobcollins.capstoneproject;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import com.amazonaws.mobile.auth.ui.AuthUIConfiguration;
@@ -9,7 +8,6 @@ import com.amazonaws.mobile.auth.ui.SignInUI;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.AWSStartupHandler;
 import com.amazonaws.mobile.client.AWSStartupResult;
-import com.example.jacobcollins.capstoneproject.R;
 
 public class AuthenticatorActivity extends Activity {
     @Override
@@ -24,7 +22,7 @@ public class AuthenticatorActivity extends Activity {
                 AuthUIConfiguration config =
                         new AuthUIConfiguration.Builder()
                                 .userPools(true)  // true? show the Email and Password UI
-                                .canCancel(true)
+                                .canCancel(false)
                                 .build();
                 SignInUI signin = (SignInUI) AWSMobileClient.getInstance().getClient(AuthenticatorActivity.this, SignInUI.class);
                 signin.login(AuthenticatorActivity.this, HealthInsuranceActivity.class).authUIConfiguration(config).execute();

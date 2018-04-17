@@ -33,22 +33,6 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
 
     private double amountOfMilesRan = 0.0;
 
-//    private boolean OneMileDistanceGoal = false;
-//    private boolean FiveMilesDistanceGoal = false;
-//    private boolean TenMilesDistanceGoal = false;
-//    private boolean TwentyMilesDistanceGoal = false;
-//    private boolean FiftyMilesDistanceGoal = false;
-//    private boolean OneHundredMilesDistanceGoal = false;
-//
-//    private boolean NineMinuteTimeGoal = false;
-//    private boolean EightMinuteTimeGoal = false;
-//    private boolean SevenMinuteTimeGoal = false;
-//    private boolean SixMinuteTimeGoal = false;
-//    private boolean FiveMinuteTimeGoal = false;
-//
-//    private int progressDistanceAmount = 0;
-//    private int progressMileTimeAmount = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,25 +56,14 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         mileTimeProgressBar = findViewById(R.id.mileTimeProgressBar);
     }
 
-    public boolean hasDistanceGoal()
-    {
-        if(checkBoxOneMile.isChecked()) return true;
-        else if(checkBoxFiveMiles.isChecked()) return true;
-        else if(checkBoxTenMiles.isChecked()) return true;
-        else if(checkBoxTwentyMiles.isChecked()) return true;
-        else if(checkBoxFiftyMiles.isChecked()) return true;
-        else if(checkBoxOneHundredMiles.isChecked()) return true;
-        return false;
+    public boolean hasDistanceGoal() {
+        return checkBoxOneMile.isChecked() || checkBoxFiveMiles.isChecked() || checkBoxTenMiles.isChecked()
+                || checkBoxTwentyMiles.isChecked() || checkBoxFiftyMiles.isChecked() || checkBoxOneHundredMiles.isChecked();
     }
 
-    public boolean hasMileTimeGoal()
-    {
-        if(checkBoxNineMinuteMile.isChecked()) return true;
-        else if(checkBoxEightMinuteMile.isChecked()) return true;
-        else if(checkBoxSevenMinuteMile.isChecked()) return true;
-        else if(checkBoxSixMinuteMile.isChecked()) return true;
-        else if(checkBoxFiveMinuteMile.isChecked()) return true;
-        return false;
+    public boolean hasMileTimeGoal() {
+        return checkBoxNineMinuteMile.isChecked() || checkBoxEightMinuteMile.isChecked() ||
+                checkBoxSevenMinuteMile.isChecked() || checkBoxSixMinuteMile.isChecked() || checkBoxFiveMinuteMile.isChecked();
     }
 
     public double findDistanceGoal()
@@ -130,11 +103,13 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
     public void distanceCheckboxClicked(View view)
     {
         unCheckOtherDistanceBoxesOtherThan(view);
+        distanceProgressBar.setProgress(0);
     }
 
     public void mileTimeCheckboxClicked(View view)
     {
         unCheckOtherMileTimeBoxesOtherThan(view);
+        mileTimeProgressBar.setProgress(0);
     }
 
     public void unCheckAllDistanceBoxes()
@@ -258,14 +233,6 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         if (extras != null)
         {
             System.out.println("In Intent");
-//            System.out.println("Has MileTimeGoal: " + hasMileTimeGoal());
-//            System.out.println("Has DistanceGoal: " + hasDistanceGoal());
-//            System.out.println("FiveMinuteMile Box is Checked: " + checkBoxFiveMinuteMile.isChecked());
-//            System.out.println("SixMinuteMile Box is Checked: " + checkBoxSixMinuteMile.isChecked());
-//            System.out.println("SevenMinuteMile Box is Checked: " + checkBoxSevenMinuteMile.isChecked());
-//            System.out.println("EightMinuteMile Box is Checked: " + checkBoxEightMinuteMile.isChecked());
-//            System.out.println("NineMinuteMile Box is Checked: " + checkBoxNineMinuteMile.isChecked());
-//            System.out.println(mileTimeProgressBar.getProgress());
             if(hasMileTimeGoal()) {
                 System.out.println("In MileTime Goal");
                 double runTimePerMile = extras.getDouble("Run Time Per Mile");
@@ -329,7 +296,7 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         mEdit1.remove("mileTimeProgressBar Amount");
         mEdit1.remove("distanceRanTotal");
 
-        mEdit1.commit();
+        mEdit1.apply();
     }
 
     public void saveData()
@@ -338,7 +305,6 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
         SharedPreferences.Editor mEdit1 = sp.edit();
 
         clearPrefsOfGoalData();
-//        mEdit1.clear();
 
         if(checkBoxOneMile.isChecked()) mEdit1.putString("distanceCheckBox", "1");
         else if(checkBoxFiveMiles.isChecked()) mEdit1.putString("distanceCheckBox", "5");
@@ -435,13 +401,13 @@ public class GoalsActivity extends AppCompatActivity implements OnClickListener 
 //        clearData();
     }
 
-    public void clearData()
-    {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor mEdit1 = sp.edit();
-
-        mEdit1.clear();
-    }
+//    public void clearData()
+//    {
+//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+//        SharedPreferences.Editor mEdit1 = sp.edit();
+//
+//        mEdit1.clear();
+//    }
 
     @Override
     public void onClick(View view)

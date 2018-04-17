@@ -9,13 +9,13 @@
     <string name="title_activity_health_insurance">HealthInsuranceActivity</string>
     <string name="title_activity_goals">GoalsActivity</string>
     <string name="title_activity_help">HelpActivity</string>
-    <string name="help_page_overview">A Help Overview will be completely written on the completion of this app on this page.
-        It will include an overview of what each tab/page does and any other significant info that I deem important for the user to know.</string>
+    <string name="help_page_overview">The Home Tab, the one which shows your location, is where you can start and end your runs. A timer will start at the top of the screen and
+        will stop when the you choose to end the run. From here, you can also access the other tabs: Goals, Health Insurance, and Help. The Goals Tab, shows you your current
+        goals, your progress towards them, and whether you've completed any. You may set or change goals at any time. The Health Insurance Tab, allows you to send your running data
+        off your device and the specifics can be found in that tab.</string>
     <string name="health_insurance_page_overview">This app can, if you allow it to, store your running data off your device which would allow
         companies or agencies to look at your running data in order to provide discounts for your health insurance. This is completely optional.
-        If you would like to send your running data, create a new profile and press the update running data button. If you have already created a profile, just press the update button.</string>
-    <string name="game_page_overview">The game UI/this page will be completed when I begin working on it as of right now
-        I am not 100% exactly what the game will look like so right now all it gets is this TextView.</string>
+        If you would like to send your running data, create a new profile and press the update running data button. If you have already created a profile, you only need to login.</string>
     <string name="OneMileText">1 Mile</string>
     <string name="FiveMilesText">5 Miles</string>
     <string name="TenMilesText">10 Miles</string>
@@ -29,7 +29,7 @@
     <string name="SixMinuteMile">6 Minutes or Less Mile</string>
     <string name="FiveMinuteMile">5 Minutes or Less Mile</string>
     <string name="goal1_fragment_text">Set Your Distance Goal</string>
-    <string name="setProfileButtonText">Create Profile</string>
+    <string name="setProfileButtonText">Create Profile/LogIn</string>
     <string name="updateRunningDataText">Update Running Data</string>
     <string name="enterUserIDText">Enter Your ID Here (9 Digit, Numbers Only)</string>
     <string name="enterUserNameText">Enter Your Name Here (First Name, M.I., Last Name</string>

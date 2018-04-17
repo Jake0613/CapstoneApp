@@ -33,8 +33,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amazonaws.mobile.auth.core.IdentityHandler;
-import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.client.AWSStartupHandler;
 import com.amazonaws.mobile.client.AWSStartupResult;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -107,10 +105,6 @@ public class MapsActivity extends AppCompatActivity
 
     double distanceRanInMiles;
 
-//    private Chronometer timer;
-
-    //private LatLng startOfRunCoords = new LatLng();
-
     private ArrayList<Run> listOfRuns = new ArrayList<>();
 
     private double steps = 0;
@@ -134,7 +128,6 @@ public class MapsActivity extends AppCompatActivity
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            //Log.d("MY_APP", sensor.toString() + " - " + accuracy);
         }
     };
 
@@ -184,7 +177,6 @@ public class MapsActivity extends AppCompatActivity
         if (mSensorManager != null) {
             stepSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         }
-//        timer = (Chronometer) findViewById(R.id.timer);
     }
 
     /**
@@ -207,7 +199,6 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -218,26 +209,13 @@ public class MapsActivity extends AppCompatActivity
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.game_tab) {
-            Toast.makeText(MapsActivity.this, "Game Tab Clicked", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(MapsActivity.this, GameActivity.class));
-        } else if (item.getItemId() == R.id.health_insurance_tab) {
-            Toast.makeText(MapsActivity.this, "Health Insurance Tab Clicked", Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == R.id.health_insurance_tab) {
             startActivity(new Intent(MapsActivity.this, HealthInsuranceActivity.class));
         } else if (item.getItemId() == R.id.goals_tab) {
-            Toast.makeText(MapsActivity.this, "Goals Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, GoalsActivity.class));
         } else if (item.getItemId() == R.id.help_tab) {
-            Toast.makeText(MapsActivity.this, "Help Tab Clicked", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MapsActivity.this, HelpActivity.class));
         }
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_favorite) {
-//            Toast.makeText(MapsActivity.this, "Action clicked", Toast.LENGTH_LONG).show();
-//            return true;
-//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -316,7 +294,6 @@ public class MapsActivity extends AppCompatActivity
                                                 mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                             }
                         } else {
-                            //locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
                             mMap.moveCamera(CameraUpdateFactory
@@ -414,7 +391,6 @@ public class MapsActivity extends AppCompatActivity
             double mins = secs / 60;
             secs = secs % 60;
             double milliseconds = (updatedTime % 1000);
-//
             timerTextView.setText("" + df.format(mins) + ":"
                     + df.format(secs) + ":"
                     + df.format(milliseconds));
@@ -425,7 +401,6 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
         if (view == startRunBtn) {
-//            if(startRunBtn.getText().toString().trim().contains("Start Run")) Toast.makeText(MapsActivity.this, startRunBtn.getText().toString(), Toast.LENGTH_SHORT).show();
             if (startRunBtn.getText().toString().trim().contains("Start Run")) {
                 if(mLastKnownLocation != null) {
                     Location myLocation = mLastKnownLocation;
@@ -439,7 +414,6 @@ public class MapsActivity extends AppCompatActivity
                 startRunBtn.setText("End Run");
                 Toast.makeText(MapsActivity.this, "Run Started!", Toast.LENGTH_SHORT).show();
                 startTime = SystemClock.uptimeMillis();
-//                timer.start();
                 timerHandler.postDelayed(timerRunnable, 0);
 
             } else if (startRunBtn.getText().toString().trim().contains("End Run")) {
@@ -453,9 +427,6 @@ public class MapsActivity extends AppCompatActivity
                     mMap.addMarker(currentLocationMarker);
                 }
 
-//                DecimalFormat df = new DecimalFormat("0.00");
-
-//                timer.stop();
                 distanceRanInMiles = getDistanceRun(steps);
                 Toast toast = Toast.makeText(getApplicationContext(),
                         "You ran: " + timerTextView.getText() + "!\n" + "You ran: " + String.format("%.2f", distanceRanInMiles) + "miles", Toast.LENGTH_LONG);
@@ -472,8 +443,6 @@ public class MapsActivity extends AppCompatActivity
 
                 System.out.println("Run Time: " + temp.getRunTimeInMinutes() + "mins");
                 System.out.println("Distance Ran: " + temp.getDistanceRan() + "miles");
-//                System.out.println("Distance in Minutes: " + df.format(temp.getRunTimeInMinutes()) + "mins");
-//                System.out.println("Distance ran: " + temp.getDistanceRan() + "miles");
 
                 Intent i = new Intent(this, GoalsActivity.class);
                 double runTimePerMile = temp.getRunTimeInMinutes()/Double.parseDouble(temp.getDistanceRan());
@@ -481,7 +450,6 @@ public class MapsActivity extends AppCompatActivity
                 i.putExtra("Run Time Per Mile",runTimePerMile);
                 i.putExtra("Distance", temp.getDistanceRan());
                 startActivity(i);
-//                timer.setBase(SystemClock.elapsedRealtime());
             }
         }
     }
@@ -668,36 +636,18 @@ public class MapsActivity extends AppCompatActivity
 
         String getRunTime()
         {
-//            DecimalFormat df = new DecimalFormat("00");
-//            System.out.println("Mins: " + df.format(minutes));
-//            System.out.println("Seconds: " + df.format(seconds));
-//            System.out.println("MS: " + df.format(milliseconds));
             return "" + String.format("%.0f", minutes) + ":"
                     + String.format("%.0f", seconds) + ":"
                     + String.format("%.0f", milliseconds);
-//            return "" + minutes + ":"
-//                    + seconds + ":"
-//                    + milliseconds;
         }
 
         double getRunTimeInMinutes()
         {
-//            DecimalFormat df = new DecimalFormat("0.00");
-
-//            System.out.println("MS: " + milliseconds);
-//            System.out.println("MS to Mins: " + (milliseconds/(double)1000)/60);
-//            System.out.println("Secs: " + seconds);
-//            System.out.println("Secs to Mins: " + seconds/(double)60);
-//            System.out.println("MS: " + milliseconds);
-//            double temp = minutes + (seconds/60.00) + ((milliseconds/1000.00)/60);
-//            System.out.println("Mins: " + temp);
-//            System.out.println("Time in Minutes (Float): " + df.format(temp));
             return minutes + (seconds/60.00) + ((milliseconds/1000.00)/60);
         }
 
         String getDistanceRan()
         {
-//            DecimalFormat df = new DecimalFormat("0.00");
             return "" + String.format("%.2f", distanceInMiles);
         }
 
