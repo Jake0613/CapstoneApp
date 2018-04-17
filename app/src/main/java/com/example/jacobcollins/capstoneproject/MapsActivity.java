@@ -539,7 +539,7 @@ public class MapsActivity extends AppCompatActivity
 
     //function to determine the distance run in kilometers using average step length for men and number of steps
     public double getDistanceRun(double stepsRan) {
-        stepsRan = 2000; //delete this hardcoded for debuggggggggggggggggingggggggggggggggg
+        //stepsRan = 2000; //delete this hardcoded for debuggggggggggggggggingggggggggggggggg
         double distance = (stepsRan * 78) / (double) 100000;
         distance /= 1.609344;
         return distance;
